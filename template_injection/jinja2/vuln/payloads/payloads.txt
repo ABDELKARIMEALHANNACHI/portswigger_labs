@@ -1,0 +1,3 @@
+# Payloads — Server-Side Template Injection SSTI — jinja2
+# Add working payloads here, one per line
+

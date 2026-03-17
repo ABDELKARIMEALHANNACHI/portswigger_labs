@@ -1,0 +1,3 @@
+# Payloads — DOM-Based Vulnerabilities
+# Add working payloads here, one per line
+

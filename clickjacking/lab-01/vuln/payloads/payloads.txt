@@ -1,0 +1,3 @@
+# Payloads — Clickjacking UI Redressing
+# Add working payloads here, one per line
+

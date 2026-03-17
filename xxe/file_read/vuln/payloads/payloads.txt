@@ -1,0 +1,3 @@
+# Payloads — XML External Entity XXE — file_read
+# Add working payloads here, one per line
+

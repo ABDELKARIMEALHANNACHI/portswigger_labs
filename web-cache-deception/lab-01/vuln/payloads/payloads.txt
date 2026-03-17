@@ -1,0 +1,3 @@
+# Payloads — Web Cache Deception
+# Add working payloads here, one per line
+

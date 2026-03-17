@@ -1,0 +1,3 @@
+# Payloads — Access Control and Auth Bypass — jwt_none
+# Add working payloads here, one per line
+

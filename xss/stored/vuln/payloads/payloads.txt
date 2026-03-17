@@ -1,0 +1,3 @@
+# Payloads — Cross-Site Scripting XSS — stored
+# Add working payloads here, one per line
+

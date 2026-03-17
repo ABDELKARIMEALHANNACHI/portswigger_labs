@@ -1,0 +1,7 @@
+{
+    "lab": "XML External Entity XXE — file_read",
+    "platform": "PortSwigger Web Security Academy",
+    "difficulty": "Practitioner",
+    "target_url": "",
+    "notes": ""
+}

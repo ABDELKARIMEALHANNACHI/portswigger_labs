@@ -1,0 +1,7 @@
+{
+    "lab": "Cross-Site Scripting XSS — stored",
+    "platform": "PortSwigger Web Security Academy",
+    "difficulty": "Practitioner",
+    "target_url": "",
+    "notes": ""
+}
