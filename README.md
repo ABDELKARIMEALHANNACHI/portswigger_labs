@@ -71,11 +71,3 @@ category/
     ├── reports/               ← pentest-style write-up where relevant
     └── docs/                  ← mindmaps, flow diagrams
 ```
-
----
-
-## Why this approach
-
-Most pentest portfolios show that someone solved a lab. This one shows the full picture: what the vulnerable code looks like, why a developer would write it that way, what the correct version is, and how to make sure it never ships again.
-
-That loop — pentest, reverse, fix, detect — is what AppSec engineering actually is.
