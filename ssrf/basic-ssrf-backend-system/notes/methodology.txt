@@ -1,0 +1,41 @@
+1. Identify SSRF entry point
+   - Locate a parameter that triggers a server-side HTTP request (stockApi)
+
+2. Intercept request
+   - Use a proxy tool (Burp Suite) to capture the request
+
+3. Modify target URL
+   - Replace original URL with internal network address:
+     http://192.168.0.X:8080/admin
+
+4. Perform internal scanning
+   - Iterate through IP range (1 → 255)
+   - Use automated tools (Burp Intruder or script)
+
+5. Analyze responses
+   - Look for differences in:
+     - HTTP status codes
+     - response length
+     - response content
+
+6. Identify valid host
+   - Find the IP returning a valid admin interface (HTTP 200)
+
+7. Inspect response
+   - Extract sensitive endpoints such as:
+     /admin/delete?username=carlos
+
+8. Execute final exploit
+   - Send SSRF request targeting the delete endpoint
+
+9. Confirm impact
+   - Verify that the user has been deleted
+
+10. Document findings
+   - Record payloads, requests, responses, and behavior differences
+
+11. Understand root cause
+   - No validation of user input
+   - No restriction on internal network access
+   - Server blindly trusts external input for backend requests
+ 
