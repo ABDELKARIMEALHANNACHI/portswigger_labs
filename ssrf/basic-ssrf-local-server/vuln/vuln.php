@@ -24,4 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <form method="POST">
-    <input type="text" name="stockApi" placeholder="Enter st
+    <input type="text" name="stockApi" placeholder="Enter stock API URL">
+    <button type="submit">Check Stock</button>
+</form>
