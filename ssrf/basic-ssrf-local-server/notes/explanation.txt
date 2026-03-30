@@ -1,0 +1,16 @@
+This lab demonstrates a Server-Side Request Forgery (SSRF) vulnerability in a stock checking feature.
+
+The application allows the user to provide a URL which is then used by the backend to retrieve stock information. Instead of validating this input, the server directly performs an HTTP request to the supplied URL.
+
+This behavior creates a critical security issue because the request is executed from the server’s perspective, not the client’s. As a result, the attacker can manipulate the server to send requests to internal-only resources that are not accessible from the outside.
+
+By modifying the URL to target `http://localhost/admin`, the attacker is able to access the internal administration interface. This confirms that the server is exposing internal services via the vulnerable functionality.
+
+Further analysis of the response reveals a sensitive endpoint used to delete a user account. By sending a second request to:
+`http://localhost/admin/delete?username=carlos`
+
+the attacker can trigger a privileged action within the internal system.
+
+The root cause of this vulnerability is the lack of input validation and the absence of restrictions on outbound requests initiated by the server. The application blindly trusts user input and allows it to define the destination of a server-side HTTP request.
+
+In real-world systems, this type of vulnerability can lead to access to internal services, data exfiltration, lateral movement within the network, and in cloud environments, exposure of metadata services containing credentials.
