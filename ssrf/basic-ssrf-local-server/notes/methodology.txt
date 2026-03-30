@@ -1,0 +1,33 @@
+1. Identify an input that causes the server to make an HTTP request
+   - In this case, the stock check feature uses a URL parameter (stockApi)
+
+2. Intercept the request using a proxy tool
+   - Capture the request responsible for fetching stock data
+
+3. Modify the target URL
+   - Replace the original URL with a local address:
+     http://localhost/admin
+
+4. Observe the response
+   - The server returns the internal admin interface
+   - This confirms SSRF vulnerability exists
+
+5. Analyze the response content
+   - Identify hidden or sensitive endpoints such as:
+     /admin/delete?username=carlos
+
+6. Chain the attack
+   - Send a new request using the discovered endpoint:
+     http://localhost/admin/delete?username=carlos
+
+7. Verify impact
+   - Confirm that the action (deleting user) is executed successfully
+
+8. Understand the root cause
+   - Lack of input validation
+   - No restriction on internal requests
+   - Trusting user input for server-side operations
+
+9. Document findings
+   - Include payloads, request/response examples, and impact
+   - Highlight potential real-world exploitation scenarios
