@@ -1,0 +1,19 @@
+This lab demonstrates how SSRF can be used as an internal network reconnaissance and exploitation technique.
+
+The application exposes a stock checking feature that accepts a URL and performs a server-side HTTP request. Because the input is not validated, the attacker can control the destination of this request.
+
+Unlike the previous lab where the target was localhost, this scenario involves a private internal network range (192.168.0.X). These systems are not accessible from the outside, but the vulnerable server has direct network access to them.
+
+By exploiting SSRF, the attacker turns the server into a proxy capable of interacting with internal infrastructure.
+
+The main objective is to identify which internal host is running an admin service on port 8080. This is achieved by iterating through the IP range and observing differences in responses.
+
+When a request is sent to a non-existent host, the server typically returns an error or timeout. When the correct host is reached, the response changes (for example, returning HTTP 200 with HTML content). This difference allows the attacker to identify a valid internal system.
+
+Once the correct IP is discovered, the attacker accesses the admin interface and identifies sensitive functionality, such as deleting users.
+
+A second SSRF request is then crafted to target the deletion endpoint, resulting in the removal of the user "carlos".
+
+This lab highlights that SSRF is not limited to accessing local services. It can be used to map internal networks, discover hidden services, and interact with backend systems that were never intended to be exposed.
+
+In real-world environments, this technique can lead to full internal compromise, including access to databases, APIs, cloud metadata services, and orchestration systems.
