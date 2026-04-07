@@ -1,4 +1,73 @@
-This lab demonstrates how SSRF can be used as an internal network reconnaissance and exploitation technique.
+# ============================================================
+# EXPLANATION — Why This Vulnerability Exists
+# Basic SSRF Against Another Back-End System
+# ============================================================
+
+
+## ROOT CAUSE
+
+The application accepts a full user-supplied URL in the `stockApi` parameter
+and passes it directly to a server-side HTTP client with zero validation.
+
+The developer's intention was:
+    "The front-end sends us a URL, we fetch stock data from that URL, we return it."
+
+The developer's mistake was:
+    Trusting that the URL would always point at a legitimate stock service.
+    Never imagining that a user would change that URL to an internal IP address.
+
+
+## WHY THE INTERNAL ADMIN IS REACHABLE
+
+The web server and the admin back-end both live inside the same internal network.
+From the internet, port 8080 on 192.168.0.X is completely unreachable.
+Firewalls, security groups, and network ACLs all block it.
+
+But the web server itself is INSIDE that network.
+When the web server makes an HTTP request to 192.168.0.X:8080,
+it is an internal-to-internal request. Every firewall ignores it.
+The admin service has no reason to authenticate — it assumes
+any request reaching it must have come from a trusted source.
+
+SSRF weaponizes that assumption. You use the web server as your proxy
+to reach machines that are invisible to you from the internet.
+
+
+## THE TRUST CHAIN BEING ABUSED
+
+Internet → [FIREWALL] → Web Server (192.168.0.10)
+                              ↓
+                   No firewall here — trusted network
+                              ↓
+                   Admin Service (192.168.0.X:8080)
+                   "If you reached me, you are trusted."
+
+
+## LOCAL SERVER vs BACK-END SYSTEM — THE KEY DIFFERENCE
+
+Local Server SSRF:
+    You point at 127.0.0.1 — the server attacks ITSELF.
+    The same process loops back to its own localhost services.
+    Example: http://127.0.0.1:8080/admin
+
+Back-End System SSRF (THIS LAB):
+    You point at 192.168.0.X — the server attacks a DIFFERENT MACHINE.
+    The request leaves the web server and travels across the internal network.
+    Example: http://192.168.0.68:8080/admin
+
+The impact of back-end system SSRF is broader:
+    - You can reach databases, caches, message queues, internal APIs
+    - You can map the entire internal network
+    - One SSRF vulnerability can expose the entire internal infrastructure
+
+
+## WHAT MADE THIS EXPLOITABLE IN PRACTICE
+
+1. No URL validation — any URL accepted, including RFC 1918 private addresses
+2. No allowlist — the app should only contact its known stock service, nothing else
+3. Admin panel trusts source IP — assumes internal = authenticated
+4. Admin panel has no authentication — no token, no session, no login
+5. Admin actions require only a GET request — DELETE via URL parameterThis lab demonstrates how SSRF can be used as an internal network reconnaissance and exploitation technique.
 
 The application exposes a stock checking feature that accepts a URL and performs a server-side HTTP request. Because the input is not validated, the attacker can control the destination of this request.
 
