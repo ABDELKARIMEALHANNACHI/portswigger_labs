@@ -29,8 +29,8 @@ The goal is not to collect solved labs. The goal is to understand every vulnerab
 | Authentication | 🔄 In Progress | 46/55 |
 | GraphQL API Vulnerabilities | 🔄 In Progress | 1/29 |
 | Access Control / Auth Bypass | 🔄 In Progress | — |
-| XSS | 🔄 In Progress | — |
-| SSRF | 🔄 In Progress | — |
+| XSS |✅ Completed  | — |
+| SSRF | ✅ Completed  | — |
 | XXE | 🔄 In Progress | — |
 | Template Injection (SSTI) | 🔄 In Progress | — |
 | CSRF | 🔴 Not Started | 0/49 |
@@ -41,7 +41,7 @@ The goal is not to collect solved labs. The goal is to understand every vulnerab
 | Prototype Pollution | 🔴 Not Started | 0/65 |
 | Race Conditions | 🔴 Not Started | 0/29 |
 | Web Cache Deception | 🔴 Not Started | 0/36 |
-| Business Logic | 🔴 Not Started | — |
+| Business Logic | ✅ Completed  | — |
 | DOM-Based Vulnerabilities | 🔴 Not Started | — |
 | HTTP Request Smuggling | 🔴 Not Started | — |
 | OAuth | 🔴 Not Started | — |
