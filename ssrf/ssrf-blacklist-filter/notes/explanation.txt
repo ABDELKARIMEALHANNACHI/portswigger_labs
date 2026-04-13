@@ -1,0 +1,131 @@
+# ============================================================
+# EXPLANATION — SSRF with Blacklist-Based Input Filter
+# ============================================================
+
+
+## WHAT IS A BLACKLIST FILTER?
+
+A blacklist filter is a security control that rejects input
+containing specific known-bad strings. For SSRF, a developer
+implementing a blacklist might write:
+
+    if '127.0.0.1' in url or 'localhost' in url:
+        reject the request
+
+    if '/admin' in url:
+        reject the request
+
+This looks reasonable. It is fundamentally broken.
+
+
+## WHY BLACKLISTS ALWAYS FAIL FOR SSRF
+
+The core problem: there are infinite representations of the same
+network address. The developer can only enumerate a finite list of
+bad strings. They will always miss something.
+
+For SSRF specifically, the blacklist approach fails because:
+
+1. IP addresses have many equivalent forms
+   127.0.0.1 == 2130706433 == 0x7f000001 == 0177.0.0.1 == 127.1
+
+2. Hostnames can be substituted with IPs or DNS tricks
+   localhost == 127.0.0.1 == localtest.me == 127.0.0.1.nip.io
+
+3. URL paths can be encoded in multiple ways
+   /admin == /%61dmin == /%2561dmin (double-encoded)
+
+4. The filter checks the RAW input. The server DECODES before using.
+   This mismatch is the bypass gap.
+
+
+## THE TWO DEFENSES IN THIS LAB
+
+Defense 1 — IP/hostname blocklist:
+    Checks if the URL string contains "127.0.0.1" or "localhost"
+    Does NOT resolve the hostname to an IP before checking
+    Does NOT account for alternative IP notations
+
+Defense 2 — Path blocklist:
+    Checks if the URL path contains "/admin" as a raw string
+    Does NOT URL-decode the path before checking
+    Does NOT normalize encoded characters
+
+
+## HOW THE DOUBLE-ENCODING BYPASS WORKS
+
+This is the most elegant part of this lab. The path /admin is blocked.
+
+URL encoding converts characters to %XX hex:
+    a = %61
+    /admin = /%61dmin   ← single encoded
+
+But what if we encode the percent sign itself?
+    % = %25
+    /admin = /%2561dmin  ← double encoded
+
+Now trace what happens:
+
+Step 1 — Filter reads the raw input:
+    /%2561dmin
+    Does this string contain "admin"? NO → PASS
+
+Step 2 — Web server receives the request:
+    URL decode /%2561dmin
+    %25 → %
+    Remaining: /%61dmin
+
+Step 3 — Web server decodes again (some servers do a second decode):
+    %61 → a
+    Final path: /admin
+
+The filter only decoded once (or not at all).
+The server decoded twice.
+That mismatch is the bypass.
+
+More precisely: %2561 → first decode gives %61 → second decode gives 'a'
+The filter sees %2561 and does not recognize it as 'a'. The server does.
+
+
+## THE IP BYPASS IN DETAIL
+
+127.0.0.1 in decimal:
+
+    IP addresses are 32-bit integers written in dotted-decimal notation.
+    127.0.0.1 means:
+        127 × 16777216  =  2130706432
+          0 × 65536     =  0
+          0 × 256       =  0
+          1 × 1         =  1
+        Total           =  2130706433
+
+    http://2130706433/ is a perfectly valid URL.
+    Most HTTP libraries accept it and connect to 127.0.0.1.
+    A string filter checking for "127.0.0.1" never sees it.
+
+
+## THE FUNDAMENTAL FLAW
+
+Blacklists check what the input LOOKS LIKE.
+The server uses what the input MEANS.
+
+Until the filter resolves, decodes, and normalizes the input
+to its canonical form before checking, there will always be a gap
+between what the filter sees and what the server executes.
+
+The only correct defense is:
+    1. Allowlist — only permit known-good values, reject everything else
+    2. Resolve + check — resolve the DNS, check the resolved IP against
+       a list of blocked networks AFTER full decoding and normalization
+    3. Both of the above together
+
+
+## LOCAL SERVER vs BACK-END — WHAT IS DIFFERENT HERE
+
+This lab targets localhost (local server), not a separate back-end system.
+The admin interface is bound to 127.0.0.1 and has no authentication —
+it trusts all requests that arrive from the loopback address.
+
+The filter was added as a patch after the SSRF was discovered.
+It is a classic example of defense-in-depth done wrong:
+adding a weak control on top of a fundamentally broken architecture.
