@@ -1,0 +1,110 @@
+# ============================================================
+# EXPLANATION — SSRF with Filter Bypass via Open Redirection
+# Why both vulnerabilities exist and why the chain works
+# ============================================================
+
+
+## THE TWO VULNERABILITIES
+
+This lab requires two bugs working together.
+Each alone is limited. Together they give full internal access.
+
+
+## BUG 1 — SSRF IN STOCK CHECKER
+
+The stock checker accepts a user-supplied URL in `stockApi` and makes a
+server-side HTTP request to it. The developer added a filter:
+"only allow requests to local application URLs."
+
+The filter's intent: prevent the server from reaching external or internal hosts.
+The filter's implementation: check that the URL is a local path (starts with /)
+or points to the local application domain.
+
+This is actually a reasonable defense — if implemented correctly.
+The failure is that it does not control what happens AFTER the request is made.
+Specifically, it does not validate redirect destinations.
+
+
+## BUG 2 — OPEN REDIRECT IN NEXT PRODUCT FEATURE
+
+The Next Product feature takes a `path` parameter and places it directly into
+the `Location` header of a 302 response:
+
+  Request:  GET /product/nextProduct?path=/product?productId=2
+  Response: 302 Location: /product?productId=2
+
+The developer intended `path` to always be an internal path like `/product?productId=X`.
+There is no validation that `path` is a relative URL.
+An attacker can supply any URL:
+
+  Request:  GET /product/nextProduct?path=http://192.168.0.12:8080/admin
+  Response: 302 Location: http://192.168.0.12:8080/admin
+
+The redirect goes anywhere. This is an open redirect vulnerability (CWE-601).
+
+
+## WHY THE CHAIN WORKS
+
+The stock checker filter checks the FIRST URL — the one in `stockApi`.
+When `stockApi=/product/nextProduct?path=http://192.168.0.12:8080/admin`:
+
+  Filter check:
+    Is this a local path? YES (starts with /) → PASSES
+
+  HTTP client makes request:
+    GET /product/nextProduct?path=http://192.168.0.12:8080/admin
+    → Returns 302 Location: http://192.168.0.12:8080/admin
+
+  HTTP client follows redirect (default behavior in most libraries):
+    GET /admin HTTP/1.1 Host: 192.168.0.12:8080
+    → Returns admin panel HTML
+
+  Filter is already done. It only checked the FIRST URL.
+  It never saw the redirect destination.
+
+The filter is like a security guard at the front door who checks your ID once.
+After you are inside, you can go anywhere — including areas marked "no entry."
+
+
+## THE CORE PRINCIPLE — TIME OF CHECK VS TIME OF USE
+
+The fundamental flaw is that validation happens at a DIFFERENT time than execution:
+
+  Time 1 — Validation:
+    Filter checks /product/nextProduct?path=...
+    Passes. Decision made.
+
+  Time 2 — Execution:
+    HTTP client follows 302 to http://192.168.0.12:8080/admin
+    Filter is not involved. Decision already made.
+
+This is a TOCTOU pattern (Time Of Check vs Time Of Use).
+The check and the use look at different things.
+An attacker inserts a redirect between the check and the use.
+
+
+## WHY OPEN REDIRECT COLLAPSES ANY WHITELIST
+
+Consider any whitelist-based SSRF defense:
+  "Only allow requests to stock.internal and our own domain"
+
+If ANY page on the allowed domain has an open redirect:
+  The attacker points stockApi at: allowed.com/redirect?url=INTERNAL-TARGET
+  The filter sees: allowed.com → whitelisted → PASSES
+  The redirect sends the HTTP client to: INTERNAL-TARGET → EXECUTES
+
+One open redirect on any whitelisted domain = the entire whitelist is useless.
+
+This is why fixing SSRF requires BOTH:
+  1. Allowlisting the initial URL
+  2. Disabling redirect following entirely
+
+
+## WHAT MADE THIS EXPLOITABLE
+
+1. stockApi accepted a URL with insufficient validation (SSRF exists)
+2. The filter only checked the initial URL, not redirect destinations
+3. HTTP client had redirect following enabled (default in most libraries)
+4. The nextProduct feature had no validation on the path parameter
+5. The path parameter was reflected directly into Location header
+6. The admin interface at 192.168.0.12:8080 had no authentication
