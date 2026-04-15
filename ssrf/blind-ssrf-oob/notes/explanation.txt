@@ -1,0 +1,7 @@
+This lab demonstrates Blind SSRF via the Referer header.
+
+The application includes analytics functionality that automatically fetches URLs contained in the Referer header whenever a product page is loaded.
+
+Unlike traditional SSRF, the response is not visible to the attacker. This makes the vulnerability "blind".
+
+The attacker must rely on out-of-band (OOB) techniques such as Burp Collaborator to detect the interaction.
