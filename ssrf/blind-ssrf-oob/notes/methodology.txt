@@ -1,0 +1,17 @@
+1. Identify input vector
+   - Referer header used by analytics system
+
+2. Establish testing point
+   - Load product page
+
+3. Inject OOB payload
+   - Replace Referer with Burp Collaborator URL
+
+4. Trigger server-side request
+   - Reload or resend request
+
+5. Verify interaction
+   - Check Burp Collaborator for DNS/HTTP hits
+
+6. Confirm Blind SSRF
+   - No visible response change required
