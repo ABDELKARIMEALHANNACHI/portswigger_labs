@@ -1,0 +1,23 @@
+{
+  "lab": "trusted_insecure_protocols",
+  "difficulty": "practitioner",
+  "cors_config": {
+    "allow_origin": "REGEX_SUBDOMAIN_MATCH",
+    "regex_pattern": "^https?://([a-z0-9-]+\\.)?lab-id\\.web-security-academy\\.net$",
+    "allow_credentials": true,
+    "vulnerability": "Regex uses https? — trusts both HTTP and HTTPS subdomains"
+  },
+  "xss_config": {
+    "endpoint": "http://stock.lab-id.web-security-academy.net/",
+    "vulnerable_param": "productId",
+    "type": "reflected",
+    "sanitization": "none"
+  },
+  "attack_chain": [
+    "1. Exploit server redirects victim to stock subdomain with XSS payload in productId",
+    "2. XSS fires on http://stock subdomain (trusted by main site CORS policy)",
+    "3. Injected JS makes credentialed XHR to main site /accountDetails",
+    "4. Main site sees trusted subdomain origin → returns victim API key",
+    "5. Stolen key exfiltrated to attacker log server"
+  ]
+} b
