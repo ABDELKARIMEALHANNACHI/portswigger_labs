@@ -1,3 +1,0 @@
-# Payloads — Cross-Origin Resource Sharing CORS
-# Add working payloads here, one per line
-
