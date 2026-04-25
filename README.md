@@ -25,8 +25,8 @@ The goal is not to collect solved labs. The goal is to understand every vulnerab
 | File Upload Vulnerabilities | ✅ Completed | 35/35 |
 | Web LLM Attacks | ✅ Completed | 17/17 |
 | API Testing | ✅ Completed | 29/29 |
-| SQL Injection | 🔄 In Progress | 48/51 |
-| Authentication | 🔄 In Progress | 46/55 |
+| SQL Injection |  ✅ Completed  | 51/51 |
+| Authentication |  ✅ Completed  | 55/55 |
 | GraphQL API Vulnerabilities | 🔄 In Progress | 1/29 |
 | Access Control / Auth Bypass | 🔄 In Progress | — |
 | XSS |✅ Completed  | — |
@@ -34,15 +34,15 @@ The goal is not to collect solved labs. The goal is to understand every vulnerab
 | XXE | 🔄 In Progress | — |
 | Template Injection (SSTI) | 🔄 In Progress | — |
 | CSRF | 🔴 Not Started | 0/49 |
-| CORS | 🔴 Not Started | 0/21 |
-| Clickjacking | 🔴 Not Started | 0/19 |
+| CORS | ✅ Completed | 21/21 |
+| Clickjacking | ✅ Completed | 19/19 |
 | WebSockets | 🔴 Not Started | 0/19 |
 | NoSQL Injection | 🔴 Not Started | 0/24 |
 | Prototype Pollution | 🔴 Not Started | 0/65 |
 | Race Conditions | 🔴 Not Started | 0/29 |
 | Web Cache Deception | 🔴 Not Started | 0/36 |
 | Business Logic | ✅ Completed  | — |
-| DOM-Based Vulnerabilities | 🔴 Not Started | — |
+| DOM-Based Vulnerabilities | 🔄 In Progress  | — |
 | HTTP Request Smuggling | 🔴 Not Started | — |
 | OAuth | 🔴 Not Started | — |
 | JWT Attacks | 🔴 Not Started | — |
