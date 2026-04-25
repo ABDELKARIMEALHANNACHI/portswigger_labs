@@ -1,34 +1,13 @@
-# Clickjacking UI Redressing
+# Clickjacking Labs
 
-**Status:** 🔴 Not Started
-
----
-
-## Methodology
-
-```
-PENTEST  →  exploit manually, zero extensions
-REVERSE  →  find the vulnerable code
-ANALYZE  →  understand the developer mistake
-FIX      →  write the secure production version
-DETECT   →  Semgrep rule for CI/CD detection
-```
-
----
+This module replicates real-world clickjacking attack scenarios inspired by PortSwigger.
 
 ## Labs
+- Basic Clickjacking
+- Clickjacking with CSRF
+- Multi-step Clickjacking
+- Prefilled Form Abuse
+- Frame-buster Bypass
 
-| Lab | Status |
-|---|---|
-| Update as you complete labs | — |
-
----
-
-## Key Techniques
-<!-- techniques specific to this category -->
-
----
-
-## References
-- [PortSwigger Learning Path](https://portswigger.net/web-security)
-- [OWASP](https://owasp.org)
+## Methodology
+Break → Analyze → Exploit → Fix → Test
