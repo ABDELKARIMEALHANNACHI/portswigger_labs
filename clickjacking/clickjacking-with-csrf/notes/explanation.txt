@@ -1,0 +1,49 @@
+=============================================================
+ CLICKJACKING + CSRF BYPASS — EXPLANATION
+=============================================================
+
+THE COMMON MISCONCEPTION
+─────────────────────────
+Many developers believe: "Our forms have CSRF tokens, so we're protected
+from clickjacking too."
+
+This is WRONG. Here's why:
+
+CSRF vs CLICKJACKING — KEY DISTINCTION
+──────────────────────────────────────
+
+CSRF Attack Flow:
+  Attacker's site → <form action="victim.com/action"> → sends cross-origin request
+  → Server validates CSRF token: FAILS (attacker can't read the victim's token)
+  → Attack BLOCKED ✔
+
+Clickjacking Attack Flow:
+  Attacker's site → <iframe src="victim.com/account">
+    → Victim's browser loads victim.com INSIDE the iframe
+    → Victim's authenticated session + CSRF token are LOADED in the iframe
+    → Victim clicks attacker's decoy → actually clicks target button
+    → Browser sends request FROM victim.com (not from attacker.com)
+    → CSRF token is VALID (it was loaded from the real page)
+    → Server sees: authenticated request, valid CSRF token, valid origin
+    → Attack SUCCEEDS ✗
+
+THE CRITICAL DIFFERENCE
+─────────────────────────
+CSRF tokens protect against forged cross-origin requests.
+In clickjacking, the request is NOT forged — it originates from the real
+victim.com context (inside the iframe), with the real CSRF token.
+
+The server cannot distinguish between:
+  - "User intentionally clicked Submit"
+  - "User was tricked into clicking Submit via clickjacking"
+
+Both look IDENTICAL to the server.
+
+REQUIRED PROTECTIONS
+─────────────────────
+To be fully protected, you need BOTH:
+
+  1. CSRF tokens — prevent cross-origin form forgery
+  2. X-Frame-Options: DENY / CSP frame-ancestors 'none' — prevent clickjacking
+
+These protections are COMPLEMENTARY, not interchangeable.

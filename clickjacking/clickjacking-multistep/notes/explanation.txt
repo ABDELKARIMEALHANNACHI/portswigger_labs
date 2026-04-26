@@ -1,0 +1,41 @@
+=============================================================
+ MULTISTEP CLICKJACKING — EXPLANATION
+=============================================================
+
+THE CHALLENGE
+─────────────
+Some developers believe that requiring multiple confirmation steps
+(e.g., "Delete Account" → "Are you sure? Yes / No") prevents clickjacking
+because the attacker would need to trick the user into clicking TWICE.
+
+This is incorrect.
+
+ATTACK DESIGN
+─────────────
+The attacker designs a multi-step decoy that mirrors the number of
+confirmation steps on the target:
+
+  Decoy Step 1 → overlays "Delete Account" button
+  Decoy Step 2 → overlays "Yes" confirmation button
+
+Both steps can be made believable with engaging social engineering:
+  Step 1: "Claim your loyalty bonus!"
+  Step 2: "Confirm to credit your account"
+
+TECHNICAL IMPLEMENTATION
+─────────────────────────
+1. Both decoy buttons are positioned using absolute CSS
+2. A single iframe loads the target application
+3. JavaScript controls which decoy step is visible
+4. After step 1 click, JS hides step 1 UI and shows step 2 UI
+5. The iframe is still loaded; the target app now shows the confirmation
+6. The victim clicks "Confirm" → actually clicks "Yes, delete account"
+
+KEY INSIGHT
+───────────
+Multi-step confirmation dialogs provide NO additional security against
+clickjacking. The attacker simply adds more decoy steps to match.
+
+The only defences are server-side header controls:
+  Content-Security-Policy: frame-ancestors 'none'
+  X-Frame-Options: DENY

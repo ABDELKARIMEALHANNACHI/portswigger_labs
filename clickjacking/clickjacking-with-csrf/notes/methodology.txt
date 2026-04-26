@@ -1,0 +1,41 @@
+=============================================================
+ CLICKJACKING + CSRF BYPASS — METHODOLOGY
+=============================================================
+
+PHASE 1 — IDENTIFY CSRF-PROTECTED ACTIONS
+───────────────────────────────────────────
+1. Browse target app, find forms with state-changing actions.
+2. View source and look for CSRF tokens:
+   curl -s https://TARGET_URL/my-account | grep -i csrf
+3. Confirm token is present → developer believes CSRF is mitigated.
+
+PHASE 2 — CONFIRM CLICKJACKING IS STILL POSSIBLE
+──────────────────────────────────────────────────
+curl -sI https://TARGET_URL/my-account | grep -i 'x-frame\|content-security'
+→ If no X-Frame-Options or CSP frame-ancestors: frameable → attack viable.
+
+PHASE 3 — EXPLAIN THE BYPASS (for report)
+────────────────────────────────────────────
+"Although the form at /my-account includes a CSRF token, the page is embeddable
+in an iframe. When a victim is tricked into clicking a decoy element overlaid
+on the iframe, their browser submits the form including the valid CSRF token
+from the victim's own loaded session. The server cannot distinguish this from
+an intentional submission."
+
+PHASE 4 — BUILD EXPLOIT
+──────────────────────────
+1. Open exploit/exploit.html
+2. Set TARGET_URL
+3. Align decoy button with "Update email" / target action button
+4. Host and deliver
+
+PHASE 5 — DEMONSTRATE IMPACT
+──────────────────────────────
+1. Victim clicks once
+2. CSRF-protected action executes (e.g., email changed)
+3. Screenshot the result
+
+PHASE 6 — VERIFY FIX
+──────────────────────
+python3 fix/fix.py --url https://TARGET_URL/my-account
+→ Confirm both CSRF token AND framing protection are in place

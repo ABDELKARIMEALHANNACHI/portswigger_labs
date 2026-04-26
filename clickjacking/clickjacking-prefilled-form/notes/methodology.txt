@@ -1,0 +1,37 @@
+=============================================================
+ PREFILLED FORM CLICKJACKING — METHODOLOGY
+=============================================================
+
+PHASE 1 — DISCOVER PARAMETER REFLECTION
+─────────────────────────────────────────
+1. Visit target form page: /my-account
+2. Add a test parameter: /my-account?email=test%40evil.com
+3. Inspect page source — is "test@evil.com" in an input value attribute?
+4. Try other params: username, name, address, phone, etc.
+
+PHASE 2 — CONFIRM CLICKJACKING
+────────────────────────────────
+curl -sI https://<LAB>/my-account | grep -i 'x-frame\|content-security'
+→ Confirm no framing protection
+
+PHASE 3 — CRAFT EXPLOIT URL
+────────────────────────────
+https://<LAB>/my-account?email=attacker%40evil.com
+(URL-encode @ as %40)
+
+PHASE 4 — BUILD EXPLOIT PAGE
+──────────────────────────────
+1. Open exploit/exploit.html
+2. Set TARGET_URL and ATTACKER_EMAIL
+3. Debug alignment — the form submit button should be overlaid by decoy
+4. Test: victim clicks → email changes on target app
+
+PHASE 5 — IMPACT DEMONSTRATION
+────────────────────────────────
+1. Email is changed to attacker@evil.com
+2. Attacker triggers password reset
+3. Full account takeover demonstrated
+
+PHASE 6 — REMEDIATION VERIFICATION
+─────────────────────────────────────
+python3 fix/fix.py --url https://<LAB>/my-account

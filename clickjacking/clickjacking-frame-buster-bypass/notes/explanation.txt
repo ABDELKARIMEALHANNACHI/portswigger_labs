@@ -1,0 +1,53 @@
+=============================================================
+ FRAME-BUSTER BYPASS — EXPLANATION
+=============================================================
+
+THE FALSE SECURITY OF JS FRAME BUSTERS
+────────────────────────────────────────
+Some developers try to prevent clickjacking by adding JavaScript code that
+detects when the page is loaded inside an iframe and forces a redirect:
+
+  if (top !== self) {
+    top.location = self.location;
+  }
+
+This is called a "frame buster" script and was a common defence before
+proper HTTP headers were widely supported.
+
+THE BYPASS — iframe sandbox attribute
+──────────────────────────────────────
+The HTML <iframe> element supports a sandbox attribute. When set to
+"allow-forms", it:
+
+  ✔ Allows form submissions and clicks
+  ✗ DISABLES JavaScript execution inside the iframe
+
+This means the frame buster script is never executed, so the page stays
+inside the iframe. The attacker can still trick the victim into clicking
+the target button.
+
+  <iframe src="https://victim.com/account" sandbox="allow-forms"></iframe>
+
+WHY THIS MATTERS
+────────────────
+This demonstrates a fundamental security principle:
+  "Client-side controls can always be bypassed."
+
+JavaScript frame busters are CLIENT-SIDE controls and thus unreliable.
+The browser (or attacker) controls the execution environment.
+
+THE CORRECT FIX
+────────────────
+Use server-side HTTP headers that the browser enforces natively:
+
+  Content-Security-Policy: frame-ancestors 'none'
+  X-Frame-Options: DENY
+
+These are processed BEFORE the page renders, so they cannot be bypassed
+by disabling JavaScript.
+
+BROWSER COMPATIBILITY
+─────────────────────
+- X-Frame-Options: Supported by all major browsers since IE8
+- CSP frame-ancestors: Supported by all modern browsers; NOT supported by IE
+- Implement BOTH for maximum compatibility

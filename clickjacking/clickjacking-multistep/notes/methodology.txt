@@ -1,0 +1,34 @@
+=============================================================
+ MULTISTEP CLICKJACKING — METHODOLOGY
+=============================================================
+
+PHASE 1 — MAP THE TARGET FLOW
+──────────────────────────────
+1. Log in to the target app manually.
+2. Identify all steps in the sensitive action:
+   - Click "Delete Account" → confirmation prompt appears
+   - Click "Yes, delete" → account deleted
+3. Note the exact button text and page positions for each step.
+
+PHASE 2 — EXPLOIT DEVELOPMENT
+──────────────────────────────
+1. Open exploit/exploit.html
+2. Set TARGET_URL
+3. Debug step 1: opacity:0.5, align #step1-btn with step 1 target button
+4. Click step 1 decoy — confirm the target app advances to confirmation
+5. Debug step 2: align #step2-btn with the "Yes" confirmation button
+6. Set opacity to 0.0001, test full flow
+7. Polish decoy UI to increase believability
+
+PHASE 3 — DELIVERY & EXECUTION
+────────────────────────────────
+1. Host on exploit server
+2. Deliver link to victim
+3. Victim clicks through both steps unknowingly
+4. Verify action was completed on target app
+
+TIPS
+────
+- Keep each step's decoy visually consistent (same "brand/campaign" feel)
+- Use progress indicators ("Step 1 of 2", "Step 2 of 2") to guide victim
+- Each decoy click can be logged via JavaScript fetch() for tracking

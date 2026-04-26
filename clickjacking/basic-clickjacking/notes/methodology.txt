@@ -1,0 +1,46 @@
+=============================================================
+ BASIC CLICKJACKING — ATTACK METHODOLOGY
+=============================================================
+
+PHASE 1 — RECONNAISSANCE
+─────────────────────────
+1. Identify the target URL and the sensitive action you want to trigger.
+   Example: https://<LAB-ID>.web-security-academy.net/my-account
+            Action: "Delete account" button
+
+2. Check framing protection headers:
+   curl -sI https://<LAB-ID>.web-security-academy.net | grep -i 'x-frame\|content-security'
+
+3. If no X-Frame-Options or frame-ancestors → proceed to exploitation.
+
+PHASE 2 — EXPLOIT DEVELOPMENT
+──────────────────────────────
+1. Open exploit/exploit.html in a text editor.
+2. Replace TARGET_URL with the lab URL.
+3. Set the iframe opacity to 0.5 (debug mode).
+4. Open the file in a browser.
+5. Adjust CSS top/left on #decoy-btn until it visually overlaps the target button.
+6. Set iframe opacity back to 0.0001.
+
+PHASE 3 — DELIVERY
+───────────────────
+1. Host exploit.html on the lab's exploit server.
+2. Click "Deliver exploit to victim."
+3. Observe the account deletion on the target application.
+
+PHASE 4 — VERIFICATION
+────────────────────────
+1. Log in to the target app and confirm the action was executed.
+2. Run: python3 vuln/vuln.py --url https://<LAB-ID>.web-security-academy.net
+
+PHASE 5 — REMEDIATION TESTING
+───────────────────────────────
+1. Apply the fix (add headers to the target app's response).
+2. Run: python3 fix/fix.py --url https://<LAB-ID>.web-security-academy.net
+3. Confirm the exploit no longer works (iframe blocked by browser).
+
+NOTES
+─────
+- Always document findings with screenshots (store in screenshots/)
+- Test in multiple browsers (Chrome, Firefox, Safari)
+- Some browsers ignore X-Frame-Options in favour of CSP — implement both

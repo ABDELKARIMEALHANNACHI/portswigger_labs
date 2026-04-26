@@ -1,0 +1,49 @@
+=============================================================
+ PREFILLED FORM CLICKJACKING — EXPLANATION
+=============================================================
+
+THE VULNERABILITY COMBINATION
+──────────────────────────────
+This lab chains two weaknesses:
+
+  1. REFLECTED GET PARAMETERS → form fields
+     The application populates form input values from URL query strings.
+     e.g., /my-account?email=foo@bar.com pre-fills the email field.
+
+  2. NO CLICKJACKING PROTECTION
+     The page can be embedded in an iframe by any external site.
+
+ATTACK FLOW
+───────────
+1. Attacker crafts URL:
+     https://victim.com/my-account?email=attacker@evil.com
+
+2. This URL is loaded inside a transparent iframe.
+   The "Change Email" form is NOW pre-filled with the attacker's email.
+
+3. The victim only needs to click a single "Submit" button.
+   They don't need to type anything.
+
+4. The form submits the change-email request with the attacker's email.
+
+5. The victim's email is changed to attacker@evil.com.
+   The attacker can now trigger a password reset to take over the account.
+
+WHY THIS IS DANGEROUS
+──────────────────────
+- The victim performs ZERO suspicious actions — just one normal-looking click
+- No CSRF token issues (the request is sent by the victim's browser)
+- Works even if the form has CSRF protection
+- Account takeover via email change is a critical finding
+
+ROOT CAUSES
+───────────
+1. GET parameters should NOT be used to pre-fill sensitive form fields.
+   Use POST requests with CSRF tokens for any state-changing form.
+2. Missing X-Frame-Options / CSP frame-ancestors.
+
+REMEDIATION
+───────────
+PRIMARY:   Add Content-Security-Policy: frame-ancestors 'none'
+SECONDARY: Add X-Frame-Options: DENY
+ADDITIONAL: Avoid reflecting sensitive form values from GET params

@@ -1,0 +1,52 @@
+=============================================================
+ BASIC CLICKJACKING — EXPLANATION
+=============================================================
+
+WHAT IS CLICKJACKING?
+─────────────────────
+Clickjacking (also called UI Redressing) is an attack where a malicious page
+tricks a user into clicking on an element of a *different* page that is loaded
+invisibly inside an <iframe>.
+
+The victim thinks they are interacting with the attacker's decoy page, but their
+click is actually delivered to the target application underneath.
+
+HOW THIS LAB WORKS
+──────────────────
+1. The target web application (PortSwigger lab) does NOT set X-Frame-Options
+   or a restrictive Content-Security-Policy frame-ancestors directive.
+
+2. This means any external page can embed the target site inside an <iframe>.
+
+3. The attacker creates a page with:
+   - A visible decoy element (e.g., "Claim Your Prize!" button)
+   - An invisible iframe loaded with the *target site* (e.g., /my-account)
+   - CSS positioning so the decoy button visually overlaps the "Delete account"
+     button on the target site
+
+4. When the victim clicks "Claim Prize," they actually click "Delete account"
+   on the real application.
+
+BROWSER REQUIREMENTS
+────────────────────
+- Same-origin policy does NOT prevent cross-origin iframing
+- The browser renders the iframe (including authenticated sessions via cookies)
+- CSS opacity:0.0001 makes the iframe invisible but still receives pointer events
+
+IMPACT
+──────
+- Account deletion, privilege escalation, financial transactions
+- Any button/link click can be hijacked — state-changing actions are highest risk
+
+ROOT CAUSE
+──────────
+Missing HTTP response headers that instruct browsers to refuse framing:
+  - X-Frame-Options: DENY
+  - Content-Security-Policy: frame-ancestors 'none'
+
+TOOLS USED
+──────────
+- Browser DevTools (alignment / debug mode)
+- Burp Suite (header inspection)
+- curl (header validation)
+- Python requests (automated header check)
