@@ -1,3 +1,0 @@
-# Payloads — Cross-Site Request Forgery CSRF
-# Add working payloads here, one per line
-

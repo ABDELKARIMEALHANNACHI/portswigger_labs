@@ -1,0 +1,17 @@
+LAB: csrf-samesite-lax-method-override
+
+ROOT CAUSE:
+- weak CSRF protection logic
+- improper trust assumptions
+- missing fail-closed behavior
+
+ATTACK FLOW:
+1. Find state-changing endpoint
+2. Identify weak validation
+3. Craft exploit
+4. Deliver to victim
+
+LESSONS:
+- validate every state-changing request
+- bind token to session
+- SameSite is supplementary only
