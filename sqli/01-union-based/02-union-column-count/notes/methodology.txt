@@ -1,0 +1,3 @@
+1. Use ORDER BY to find column count
+2. Confirm with UNION SELECT NULLs
+3. Replace NULL with test string to find reflection

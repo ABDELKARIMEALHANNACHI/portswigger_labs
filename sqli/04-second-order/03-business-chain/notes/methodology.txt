@@ -1,0 +1,6 @@
+BUSINESS LOGIC CHAIN:
+
+1. inject into user field
+2. stored in DB
+3. reused in admin/export/report system
+4. triggers hidden SQL execution

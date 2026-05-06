@@ -1,0 +1,43 @@
+ROOT CAUSE
+==========
+
+The application concatenates untrusted user input directly into SQL queries.
+
+Vulnerable pattern:
+
+```
+query = "SELECT ... WHERE category = '" + input + "'"
+```
+
+This allows attackers to terminate the original query and append arbitrary SQL.
+
+# WHY UNION WORKS
+
+UNION merges results from two SELECT statements.
+
+Original query:
+
+```
+SELECT id,name,price FROM products WHERE category='laptops'
+```
+
+Injected query:
+
+```
+SELECT id,name,price FROM products
+WHERE category=''
+UNION
+SELECT username,password,NULL FROM users
+```
+
+The database merges both result sets into one response.
+
+# REAL-WORLD IMPACT
+
+* credential theft
+* customer data exposure
+* admin takeover
+* financial data leaks
+* cloud secret extraction
+* lateral movement
+

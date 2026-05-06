@@ -1,0 +1,13 @@
+POSTGRESQL NOTES
+================
+
+Version:
+SELECT version()
+
+Tables:
+SELECT tablename FROM pg_tables
+
+Columns:
+SELECT column_name
+FROM information_schema.columns
+

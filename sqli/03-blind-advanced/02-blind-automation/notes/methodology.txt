@@ -1,0 +1,6 @@
+AUTOMATION FLOW:
+
+1. loop index i
+2. loop charset
+3. compare true/false
+4. build string incrementally

@@ -1,3 +1,0 @@
-# Payloads — SQL Injection — blind
-# Add working payloads here, one per line
-

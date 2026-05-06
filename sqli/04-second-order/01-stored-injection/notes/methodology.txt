@@ -1,0 +1,5 @@
+FLOW:
+
+1. inject payload in input field
+2. stored in DB
+3. executed later in admin query

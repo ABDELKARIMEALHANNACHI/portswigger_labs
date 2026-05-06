@@ -1,0 +1,14 @@
+REAL WORLD WHERE THIS APPEARS
+
+* search bars
+* product filters
+* API query parameters
+* analytics dashboards
+* admin sorting tools
+
+COMMON MISTAKE IN ENTERPRISE CODE:
+
+```
+query = "SELECT * FROM products WHERE name LIKE '%" + input + "%'"
+```
+

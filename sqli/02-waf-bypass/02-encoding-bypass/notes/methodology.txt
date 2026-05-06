@@ -1,0 +1,5 @@
+ENCODING BYPASS:
+
+- URL encode keywords
+- double encode
+- split encoding across tokens

@@ -1,0 +1,31 @@
+REAL-WORLD UNION SQLi PATTERNS
+==============================
+
+1. Reporting dashboards
+   Example:
+   /reports?sort=revenue
+
+2. Product filtering systems
+   Example:
+   /products?category=phones
+
+3. Analytics platforms
+   Example:
+   /dashboard?metric=sales
+
+4. Export functionality
+   Example:
+   /export?table=users
+
+5. Legacy ERP systems
+   Dynamic SQL often built via string concatenation.
+
+# WHY IT STILL EXISTS
+
+* legacy code
+* rushed feature delivery
+* ORM misuse
+* unsafe raw queries
+* poor AppSec review
+* insecure internal tools
+

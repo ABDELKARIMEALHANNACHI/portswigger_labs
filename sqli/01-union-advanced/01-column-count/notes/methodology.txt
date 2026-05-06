@@ -1,0 +1,3 @@
+STEP 1: Use ORDER BY until crash
+STEP 2: Confirm column count
+STEP 3: Match UNION SELECT NULL count

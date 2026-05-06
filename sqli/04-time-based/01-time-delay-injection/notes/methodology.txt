@@ -1,0 +1,16 @@
+TIME-BASED SQLi FLOW
+
+STEP 1 — baseline response time
+(no injection)
+
+STEP 2 — inject delay payload
+sleep(3)
+
+STEP 3 — confirm timing difference
+
+STEP 4 — convert boolean logic into delay logic
+
+STEP 5 — extract data character-by-character
+
+KEY IDEA:
+Time = oracle channel

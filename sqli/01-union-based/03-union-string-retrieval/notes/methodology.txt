@@ -1,0 +1,14 @@
+STEP-BY-STEP ATTACK FLOW
+
+1. Confirm SQL injection
+2. Determine column count (ORDER BY / UNION NULLs)
+3. Identify visible output column
+4. Replace NULL with test string
+5. Inject real table/column names
+6. Extract sensitive data
+
+REAL WORLD SINKS:
+- search results
+- product listings
+- admin dashboards
+- API JSON responses

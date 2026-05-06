@@ -1,0 +1,3 @@
+STEP 1: Confirm column count
+STEP 2: Inject UNION SELECT
+STEP 3: Map output columns

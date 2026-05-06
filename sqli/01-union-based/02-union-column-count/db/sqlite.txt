@@ -1,0 +1,9 @@
+SQLITE BEHAVIOR
+
+* ORDER BY accepts column index
+* NULL works as universal placeholder
+* UNION requires exact column count
+  EOF
+
+echo "[+] UNION column count lab created."
+echo "[+] DONE"

@@ -1,0 +1,9 @@
+TABLE: users
+- id
+- username
+- password
+
+TABLE: products
+- id
+- name
+- description

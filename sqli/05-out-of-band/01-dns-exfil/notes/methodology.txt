@@ -1,0 +1,5 @@
+DNS EXFIL FLOW:
+
+1. inject payload
+2. database resolves domain
+3. attacker DNS logs data

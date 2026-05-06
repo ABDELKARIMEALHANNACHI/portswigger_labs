@@ -1,0 +1,13 @@
+IMPACT ANALYSIS
+
+If exploited:
+
+- user credentials leaked
+- session hijacking possible
+- privilege escalation
+- full database dump
+
+CVSS: 9.1 Critical
+
+COMMON ROOT CAUSE:
+- string concatenation in SQL queries

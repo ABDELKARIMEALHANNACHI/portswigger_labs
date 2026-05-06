@@ -1,0 +1,12 @@
+MSSQL NOTES
+===========
+
+Version:
+SELECT @@version
+
+Databases:
+SELECT name FROM master..sysdatabases
+
+RCE:
+xp_cmdshell
+

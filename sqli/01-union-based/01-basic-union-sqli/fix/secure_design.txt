@@ -1,0 +1,17 @@
+SECURE ENGINEERING PRINCIPLES
+=============================
+
+1. Always use parameterized queries
+2. Never concatenate user input into SQL
+3. Avoid raw SQL when possible
+4. Use allowlists for:
+
+   * sorting
+   * filtering
+   * table names
+5. Separate application accounts by privilege
+6. Disable dangerous DB functions
+7. Log SQL errors securely
+8. Add WAF detection rules
+9. Use least privilege DB accounts
+

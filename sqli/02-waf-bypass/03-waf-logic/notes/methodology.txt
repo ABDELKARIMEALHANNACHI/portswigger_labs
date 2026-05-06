@@ -1,0 +1,8 @@
+WAF WEAKNESS:
+
+- string match only
+- no AST parsing
+- no token normalization
+
+EXPLOIT:
+break syntax matching but keep SQL valid

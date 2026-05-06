@@ -1,0 +1,5 @@
+BOOLEAN ENGINE:
+
+1. Confirm injection
+2. Compare true vs false response
+3. Extract character-by-character

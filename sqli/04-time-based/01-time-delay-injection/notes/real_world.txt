@@ -1,0 +1,10 @@
+REAL WORLD SCENARIOS
+
+- WAF blocking output-based SQLi
+- APIs returning generic JSON
+- headless microservices
+- internal job schedulers
+
+WHY IT WORKS:
+Even if output is blocked,
+database still executes logic.

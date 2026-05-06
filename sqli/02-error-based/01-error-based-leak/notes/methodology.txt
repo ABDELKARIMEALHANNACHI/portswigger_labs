@@ -1,0 +1,16 @@
+ERROR-BASED SQLi FLOW
+
+STEP 1 — Force syntax error
+' or 1=1--
+
+STEP 2 — Observe DB error response
+
+STEP 3 — Inject subquery inside error context
+
+STEP 4 — Extract data via:
+- CONCAT
+- CAST
+- mathematical errors
+- type mismatches
+
+STEP 5 — Iterate extraction

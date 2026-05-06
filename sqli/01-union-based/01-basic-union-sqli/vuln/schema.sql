@@ -1,0 +1,12 @@
+CREATE TABLE products (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name TEXT,
+price INTEGER,
+category TEXT
+);
+
+CREATE TABLE users (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+username TEXT,
+password TEXT
+);

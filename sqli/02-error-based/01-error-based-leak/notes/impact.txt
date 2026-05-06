@@ -1,0 +1,8 @@
+IMPACT
+
+- credential leakage via error messages
+- internal schema exposure
+- database fingerprinting
+- full data exfiltration via error channels
+
+SEVERITY: HIGH → CRITICAL

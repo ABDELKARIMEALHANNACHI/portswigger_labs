@@ -1,0 +1,8 @@
+IMPACT
+
+- full blind data extraction
+- authentication bypass
+- slow data exfiltration
+- stealth attacks (low detection)
+
+SEVERITY: CRITICAL (silent exploitation)

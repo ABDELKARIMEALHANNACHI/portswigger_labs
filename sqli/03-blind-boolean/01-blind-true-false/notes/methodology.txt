@@ -1,0 +1,11 @@
+BLIND BOOLEAN SQLi FLOW
+
+STEP 1 — Confirm injection
+AND 1=1 vs AND 1=2
+
+STEP 2 — Identify response difference
+
+STEP 3 — Extract data character by character:
+SUBSTR()
+
+STEP 4 — Automate extraction

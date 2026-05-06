@@ -1,0 +1,5 @@
+HTTP EXFIL FLOW:
+
+1. trigger DB operation
+2. DB or app calls external URL
+3. attacker captures request logs

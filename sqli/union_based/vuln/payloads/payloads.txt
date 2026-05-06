@@ -1,3 +1,0 @@
-# Payloads — SQL Injection — union_based
-# Add working payloads here, one per line
-

@@ -1,0 +1,5 @@
+HYBRID MODEL:
+
+- boolean first
+- fallback to time when blocked
+- combine both for reliability

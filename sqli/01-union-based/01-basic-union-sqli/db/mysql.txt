@@ -1,0 +1,18 @@
+MYSQL NOTES
+===========
+
+Version:
+SELECT version()
+
+Current DB:
+SELECT database()
+
+Tables:
+SHOW TABLES
+
+Columns:
+SHOW COLUMNS FROM users
+
+File read:
+LOAD_FILE('/etc/passwd')
+

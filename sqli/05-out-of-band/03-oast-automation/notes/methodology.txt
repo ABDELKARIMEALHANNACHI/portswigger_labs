@@ -1,0 +1,6 @@
+OAST AUTOMATION FLOW:
+
+1. inject payload
+2. trigger external interaction
+3. capture DNS/HTTP logs
+4. reconstruct data

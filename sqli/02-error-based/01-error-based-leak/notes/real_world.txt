@@ -1,0 +1,9 @@
+WHERE THIS OCCURS
+
+- debug mode enabled APIs
+- misconfigured PHP apps
+- legacy CMS systems
+- internal admin panels
+
+COMMON BUG:
+"show_errors = true" in production

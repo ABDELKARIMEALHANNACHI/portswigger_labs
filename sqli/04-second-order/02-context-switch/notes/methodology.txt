@@ -1,0 +1,5 @@
+KEY IDEA:
+
+Injection point ≠ execution point
+
+Data flows into different SQL context later
