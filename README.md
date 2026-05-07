@@ -1,8 +1,10 @@
 # portswigger_labs
 
-> Completing every PortSwigger Web Security Academy lab manually — no extensions, no automation — then reversing the vulnerable code, writing the secure fix, and building a Semgrep rule to detect the pattern in production.
+> Completing every PortSwigger Web Security Academy lab manually — no extensions, no automation — then reversing the vulnerable code, writing the secure fix, and authoring a Semgrep rule to catch the pattern in CI/CD.
 
-This is not a notes dump. Every lab follows the same full cycle:
+This is not a notes dump.
+
+Every lab follows the same full cycle:
 
 ```
 PENTEST  →  exploit the vulnerability manually with Burp Suite
@@ -12,44 +14,46 @@ FIX      →  write the production-grade secure implementation
 DETECT   →  author a Semgrep rule to catch the pattern in CI/CD
 ```
 
-The goal is not to collect solved labs. The goal is to understand every vulnerability deeply enough to find it in a real codebase, explain it to a developer, fix it properly, and prevent it from shipping again.
+The goal is not to collect solved labs. The goal is to understand every vulnerability deeply enough to **find it in a real codebase**, **explain it to a developer**, **fix it properly**, and **prevent it from shipping again**.
 
 ---
 
 ## Progress
 
-| Category | Status | Progress |
+| Category | Status | Labs |
 |---|---|---|
-| Server-Side Vulnerabilities | ✅ Completed | 52/52 |
-| Path Traversal | ✅ Completed | 14/14 |
-| File Upload Vulnerabilities | ✅ Completed | 35/35 |
-| Web LLM Attacks | ✅ Completed | 17/17 |
-| API Testing | ✅ Completed | 29/29 |
-| SQL Injection | 🔄 In Progress | 48/51 |
-| Authentication | 🔄 In Progress | 46/55 |
-| GraphQL API Vulnerabilities | 🔄 In Progress | 1/29 |
-| Access Control / Auth Bypass | 🔄 In Progress | — |
-| XSS |✅ Completed  | — |
-| SSRF | ✅ Completed  | — |
-| XXE | 🔄 In Progress | — |
-| Template Injection (SSTI) | 🔄 In Progress | — |
-| CSRF | 🔴 Not Started | 0/49 |
-| CORS | 🔴 Not Started | 0/21 |
-| Clickjacking | 🔴 Not Started | 0/19 |
-| WebSockets | 🔴 Not Started | 0/19 |
-| NoSQL Injection | 🔴 Not Started | 0/24 |
-| Prototype Pollution | 🔴 Not Started | 0/65 |
-| Race Conditions | 🔴 Not Started | 0/29 |
-| Web Cache Deception | 🔴 Not Started | 0/36 |
-| Business Logic | ✅ Completed  | — |
-| DOM-Based Vulnerabilities | 🔴 Not Started | — |
-| HTTP Request Smuggling | 🔴 Not Started | — |
-| OAuth | 🔴 Not Started | — |
-| JWT Attacks | 🔴 Not Started | — |
+| Server-Side Vulnerabilities | ✅ Completed | 52 / 52 |
+| Path Traversal | ✅ Completed | 14 / 14 |
+| File Upload Vulnerabilities | ✅ Completed | 35 / 35 |
+| SQL Injection | ✅ Completed | 51 / 51 |
+| Authentication | ✅ Completed | 55 / 55 |
+| Business Logic | ✅ Completed | — |
+| Access Control / Auth Bypass | ✅ Completed | — |
+| XSS | ✅ Completed | — |
+| SSRF | ✅ Completed | — |
+| XXE | ✅ Completed | — |
+| Template Injection (SSTI) | ✅ Completed | — |
+| CSRF | ✅ Completed | 49 / 49 |
+| CORS | ✅ Completed | 21 / 21 |
+| Clickjacking | ✅ Completed | 19 / 19 |
+| WebSockets | ✅ Completed | 19 / 19 |
+| NoSQL Injection | ✅ Completed | 24 / 24 |
+| Prototype Pollution | ✅ Completed | 65 / 65 |
+| Race Conditions | ✅ Completed | 29 / 29 |
+| Web Cache Deception | ✅ Completed | 36 / 36 |
+| DOM-Based Vulnerabilities | ✅ Completed | — |
+| OAuth | ✅ Completed | — |
+| JWT Attacks | ✅ Completed | — |
+| Web LLM Attacks | ✅ Completed | 17 / 17 |
+| API Testing | ✅ Completed | 29 / 29 |
+| GraphQL API Vulnerabilities | ✅ Completed | 29 / 29 |
+| **HTTP Request Smuggling** | 🔄 **In Progress** | — |
 
 ---
 
 ## What's inside each lab
+
+Every category follows the same directory contract:
 
 ```
 category/
@@ -71,3 +75,35 @@ category/
     ├── reports/               ← pentest-style write-up where relevant
     └── docs/                  ← mindmaps, flow diagrams
 ```
+
+---
+
+## Philosophy
+
+Most people who "complete" PortSwigger labs click through the solution and move on. That's not what this is.
+
+Every lab here is treated as a real engagement:
+- The vulnerable pattern is reconstructed from scratch — not copied from the lab.
+- The fix addresses the **root cause**, not just the symptom.
+- The Semgrep rule means the pattern can never silently ship in production again.
+- The tests prove both that the vulnerability is real and that the fix is correct.
+
+If you can't write the vulnerable code yourself, you don't fully understand the vulnerability. If you can't write a rule to detect it automatically, you'll miss it in code review.
+
+---
+
+## Semgrep Rules
+
+Every `fix/notes.md` contains a production-ready Semgrep rule for the vulnerability class. Rules cover Python, Java, PHP, and JavaScript where applicable. The full rule collection can be extracted with:
+
+```bash
+grep -r "semgrep" --include="notes.md" -A 30 . > semgrep-rules-all.yml
+```
+
+---
+
+## References
+
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security)
+- [OWASP Testing Guide v4.2](https://owasp.org/www-project-web-security-testing-guide/)
+- [Semgrep Registry](https://semgrep.dev/explore)
