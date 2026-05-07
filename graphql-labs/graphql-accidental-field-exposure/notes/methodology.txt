@@ -1,0 +1,27 @@
+LAB 2 — Methodology
+====================
+
+STEP 1 — ENUMERATE TYPES
+  • Introspect the full schema or use targeted __type queries.
+  • List all fields on sensitive types: User, Account, Admin, Payment.
+
+STEP 2 — IDENTIFY SENSITIVE FIELDS
+  • Look for: password, passwd, secret, token, apiKey, ssn, creditCard,
+    internalNote, role, permissions, isAdmin, twoFactorSecret.
+
+STEP 3 — QUERY SENSITIVE FIELDS
+  • Even if UI doesn't expose them, the resolver may still return them.
+  • Test both authenticated and unauthenticated sessions.
+
+STEP 4 — CROSS-REFERENCE WITH UI
+  • Compare schema fields vs. fields visible in the frontend — delta =
+    potentially unintentionally exposed server-side data.
+
+STEP 5 — ESCALATE
+  • Use leaked credentials/tokens to authenticate as higher-privilege users.
+  • Use leaked role info to craft privilege-escalation payloads.
+
+TOOLS
+  • InQL Burp Extension (auto-generates queries for all types)
+  • GraphQL Voyager (visual schema exploration)
+  • graphql-cop --target https://target/graphql

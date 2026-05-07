@@ -1,0 +1,30 @@
+LAB 2 — Accidental Exposure of Private GraphQL Fields
+=======================================================
+
+VULNERABILITY CLASS : Sensitive Data Exposure via Introspection (OWASP API3+API8)
+CVSS ESTIMATE       : 8.2 (High) — AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N
+
+ROOT CAUSE
+----------
+Developers mapped the internal database User entity directly to the GraphQL
+type without creating a separate DTO (Data Transfer Object). As a result,
+internal fields (password, role) were accidentally included in the schema.
+
+GraphQL's introspection system allows any client to enumerate ALL types and
+fields in the schema. An attacker only needs to:
+  1. Run __type(name:"User") to discover the `password` field exists.
+  2. Query getUser(id:1){password} to retrieve the plaintext credential.
+
+IMPACT
+------
+- Plaintext password extraction for all users.
+- Role enumeration → privilege escalation attacks.
+- Account takeover via credential stuffing or direct login.
+
+REMEDIATION
+-----------
+1. NEVER map DB entities directly to GraphQL types.
+2. Create explicit DTOs for each concern (UserPublic, UserSelf, UserAdmin).
+3. Disable introspection in production environments.
+4. Use schema directives (@deprecated, custom @auth directives) to gate fields.
+5. Implement field-level authorization via GraphQL middleware (e.g., graphql-shield).

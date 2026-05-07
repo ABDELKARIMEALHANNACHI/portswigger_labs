@@ -1,0 +1,31 @@
+LAB 3 — Finding a Hidden GraphQL Endpoint
+==========================================
+
+VULNERABILITY CLASS : Security Misconfiguration + Missing Authentication
+CVSS ESTIMATE       : 9.1 (Critical) — AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+ROOT CAUSE
+----------
+The development team relied on "security through obscurity" — placing the
+GraphQL API at a non-standard path (/api/internal/graphql-dev) with the
+assumption that attackers would not discover it.
+
+Once discovered (via Burp sitemap, JS source enumeration, robots.txt, etc.):
+  • Introspection reveals the full schema including dangerous mutations.
+  • Mutations (deleteUser, changeEmail) have no authentication check.
+  • The endpoint accepts GET requests, enabling CSRF-style URL-based attacks.
+
+IMPACT
+------
+- Full schema disclosure via introspection.
+- Unauthenticated account takeover (changeEmail → password reset flow).
+- Unauthenticated user deletion (deleteUser).
+
+REMEDIATION
+-----------
+1. Authentication required on ALL mutations.
+2. Disable introspection in production.
+3. Block GET method for GraphQL (only POST with JSON).
+4. Apply rate limiting.
+5. Use persisted queries in production (whitelist approach).
+6. WAF rules to block introspection keywords at ingress.

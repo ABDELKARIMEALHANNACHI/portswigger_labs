@@ -1,3 +1,0 @@
-# Payloads — GraphQL API Vulnerabilities
-# Add working payloads here, one per line
-

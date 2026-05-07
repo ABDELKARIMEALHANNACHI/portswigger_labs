@@ -1,0 +1,37 @@
+LAB 5 — Performing CSRF Exploits over GraphQL
+==============================================
+
+VULNERABILITY CLASS : Cross-Site Request Forgery (OWASP A01:2021)
+CVSS ESTIMATE       : 8.8 (High) — AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H
+
+ROOT CAUSE
+----------
+CSRF exploits the browser's automatic cookie-attachment behavior.
+A malicious page on attacker.com can make the victim's browser send a request
+to victim.com — with the victim's session cookie attached — IF:
+
+  1. The server accepts simple request content types (form-urlencoded, text/plain).
+  2. The session cookie is SameSite=None (or not set, which defaults to Lax on
+     modern browsers — but GET is still allowed under Lax).
+  3. No CSRF token or custom header is validated.
+
+GraphQL's default content type (application/json) triggers a CORS preflight,
+which provides inherent CSRF protection. However if the server ALSO accepts:
+  • application/x-www-form-urlencoded → no preflight → CSRF possible
+  • text/plain → no preflight → CSRF possible
+  • GET method → no preflight → CSRF possible
+
+IMPACT
+------
+- Change victim's email address → password reset → full account takeover.
+- Delete victim's account.
+- Perform any authenticated action on behalf of the victim.
+
+REMEDIATION
+-----------
+1. ONLY accept application/json — never form-encoded or plain text.
+2. Set SameSite=Strict on all session cookies.
+3. Require X-Requested-With: XMLHttpRequest custom header.
+4. Implement CSRF token (double-submit cookie pattern) as defence-in-depth.
+5. Disable GET method for GraphQL endpoint entirely.
+6. Enforce strict CORS policy (allowed origins whitelist).

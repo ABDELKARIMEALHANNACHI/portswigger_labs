@@ -1,0 +1,30 @@
+LAB 1 — Accessing Private GraphQL Posts
+========================================
+
+VULNERABILITY CLASS : IDOR + Missing Authorization (OWASP API3:2023)
+CVSS ESTIMATE       : 7.5 (High) — AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N
+
+ROOT CAUSE
+----------
+The GraphQL resolver accepts an integer `id` argument and returns the
+corresponding BlogPost object with NO authorization check. Private posts
+(isPublic=false) and sensitive fields (postPassword) are returned to any
+caller — authenticated or not.
+
+Additionally, the schema exposes `postPassword` as a top-level field,
+meaning introspection alone reveals its existence.
+
+IMPACT
+------
+- Full read access to all private blog posts.
+- Credential leakage via postPassword field (blog owner credentials).
+- Potential account takeover if credentials are reused.
+
+REMEDIATION SUMMARY
+-------------------
+1. Resolver-level auth : check isPublic before returning; restrict private
+   posts to ROLE_ADMIN.
+2. Field-level masking : postPassword resolver returns null for non-admins.
+3. Schema design       : consider removing postPassword from the public
+   schema entirely; serve it through a separate authenticated endpoint.
+4. Disable introspection in production (or use persisted queries).

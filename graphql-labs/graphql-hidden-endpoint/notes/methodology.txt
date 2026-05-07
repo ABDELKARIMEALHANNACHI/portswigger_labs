@@ -1,0 +1,31 @@
+LAB 3 — Methodology
+====================
+
+STEP 1 — PASSIVE DISCOVERY
+  • Burp Suite target sitemap — note all JS files.
+  • Search JS bundles for: "graphql", "/api/", "query", "mutation".
+  • Check robots.txt, sitemap.xml, .well-known paths.
+
+STEP 2 — ACTIVE WORDLIST FUZZING
+  • ffuf -u https://target/FUZZ -w graphql-paths.txt
+  • Common paths: graphql, api/graphql, v1/graphql, graphiql, altair,
+    graphql/console, internal/graphql, api/internal/graphql-dev
+
+STEP 3 — UNIVERSAL PROBE
+  • GET /candidate-path?query={__typename}
+  • POST with {"query":"{__typename}"}
+  • 200 + {"data":{"__typename":"Query"}} = confirmed.
+
+STEP 4 — SCHEMA DISCOVERY
+  • Full introspection dump (save to file).
+  • Note all Query, Mutation, Subscription types.
+  • Identify dangerous mutations: delete*, reset*, admin*, update*.
+
+STEP 5 — EXPLOIT
+  • Test each mutation without authentication.
+  • Chain: changeEmail → trigger "forgot password" → full account takeover.
+
+TOOLS
+  • ffuf / feroxbuster (path fuzzing)
+  • InQL Burp extension (introspection + query generation)
+  • graphql-cop (security audit)

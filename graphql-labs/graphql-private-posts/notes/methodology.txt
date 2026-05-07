@@ -1,0 +1,33 @@
+LAB 1 — Methodology
+====================
+
+STEP 1 — RECONNAISSANCE
+  • Identify the GraphQL endpoint (/graphql, /api/graphql, etc.)
+  • Send {"query":"{__typename}"} — a 200 response confirms GraphQL.
+
+STEP 2 — INTROSPECTION
+  • Run full introspection query (see cheat sheet).
+  • Look for: fields not visible in the UI, sensitive field names
+    (password, secret, token, key, internal, private, draft).
+
+STEP 3 — ENUMERATE OBJECTS
+  • Use getAllPosts (or similar list query) to discover IDs.
+  • Note which IDs are marked isPublic=false.
+
+STEP 4 — DIRECT OBJECT ACCESS
+  • Query getBlogPost(id: <private_id>) requesting ALL fields including
+    postPassword.
+  • If auth not enforced, data is returned in clear text.
+
+STEP 5 — ALIAS BATCHING (efficiency)
+  • Combine multiple ID lookups into one request using aliases:
+    { p1:getBlogPost(id:1){postPassword} p2:getBlogPost(id:2){postPassword} }
+
+STEP 6 — DOCUMENT & REPORT
+  • Record raw request/response.
+  • Map to OWASP API3 (Broken Object Level Authorization).
+  • Provide remediation recommendations.
+
+TOOLS USED
+  • Burp Suite (Repeater + InQL extension)
+  • curl / httpie

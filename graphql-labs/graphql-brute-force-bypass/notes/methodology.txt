@@ -1,0 +1,32 @@
+LAB 4 — Methodology
+====================
+
+STEP 1 — IDENTIFY LOGIN MUTATION
+  • Introspect schema for mutations containing: login, signin, auth,
+    authenticate, verifyOTP, resetPassword.
+
+STEP 2 — TEST RATE LIMIT (BASELINE)
+  • Send 10 rapid login requests — note when 429 / lockout triggers.
+  • Identify the window (e.g. 5 requests/minute).
+
+STEP 3 — BUILD ALIAS BATCH
+  • Python script generates N aliases using a password wordlist.
+  • Single HTTP POST with all aliases.
+
+STEP 4 — EXECUTE
+  • Submit the batched mutation payload.
+  • Parse response — find alias where success=true.
+
+STEP 5 — SCALE
+  • Typical attack: 500 passwords per request, 1 request every 5 seconds.
+  • Tool: BurpSuite Intruder (batched payload) or custom script.
+
+DETECTION EVASION
+  • Rotate IPs per batch.
+  • Add random delay between requests.
+  • Use different User-Agent per request.
+
+TOOLS
+  • Burp Suite Intruder
+  • Custom Python script (see payloads.txt)
+  • graphql-cop (checks for batching protections)

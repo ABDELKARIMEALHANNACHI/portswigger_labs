@@ -1,0 +1,29 @@
+LAB 4 — Bypassing GraphQL Brute Force Protections
+===================================================
+
+VULNERABILITY CLASS : Rate Limit Bypass via Alias Batching (OWASP API4:2023)
+CVSS ESTIMATE       : 8.1 (High) — AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N
+
+ROOT CAUSE
+----------
+GraphQL allows multiple operations in a single request using ALIASES:
+  { a1:login(pass:"pw1") a2:login(pass:"pw2") ... a100:login(pass:"pw100") }
+
+The server's rate limiter counts HTTP REQUESTS — not resolver invocations.
+One HTTP request → 100 resolver calls → 100 login attempts bypass the limit.
+
+IMPACT
+------
+- Brute-force login credentials for any account.
+- Account takeover in seconds using a top-1000 password list.
+- Multi-account spray: different username per alias → distributed attack.
+
+REMEDIATION
+-----------
+1. Rate limit INSIDE the resolver (per-username, per-IP) — not at HTTP level.
+2. Use a token-bucket algorithm (Bucket4j, Redis INCR+EXPIRE).
+3. Account lockout after N failures (with admin unlock mechanism).
+4. CAPTCHA after 3 failed attempts (reCAPTCHA v3 or hCaptcha).
+5. Limit maximum number of aliases per request (query complexity analysis).
+6. Consider query depth/complexity limits middleware (graphql-query-complexity).
+7. Persisted queries: only pre-approved query hashes accepted.
