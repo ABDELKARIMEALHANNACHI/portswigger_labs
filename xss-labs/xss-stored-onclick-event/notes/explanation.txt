@@ -1,0 +1,13 @@
+LAB 20 — Stored XSS via onclick HTML Entity Bypass
+====================================================
+Context: onclick="trackLink('USER_INPUT')"
+
+The HTML parser decodes &apos; → ' BEFORE passing the attribute value to JS.
+So JS-level escaping of ' (→ \') is bypassed by posting &apos; instead of '.
+
+Attack chain:
+1. Post website = http://x&apos;-alert(1)-&apos;
+2. Server stores (without & encoding or with it)
+3. HTML renders &apos; in onclick attribute
+4. HTML parser → gives JS: trackLink('http://x'-alert(1)-'')
+5. JS executes: alert(1)

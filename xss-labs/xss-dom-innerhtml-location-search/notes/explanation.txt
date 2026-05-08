@@ -1,0 +1,8 @@
+LAB 4 — DOM XSS innerHTML + location.search
+============================================
+innerHTML parses its string as HTML. <script> tags injected via innerHTML
+are NOT executed (HTML5 spec), but event handlers on other elements ARE:
+  <img src=x onerror=alert(1)>  ← executes
+  <svg onload=alert(1)>         ← executes
+
+TAINT FLOW: location.search → innerHTML

@@ -1,0 +1,5 @@
+LAB 10 — DOM XSS document.write Inside Select
+===============================================
+The attacker injects </select> to break out of the select context, then
+adds arbitrary HTML. The key insight: document.write renders HTML that
+the browser parses — the select tag doesn't contain it.

@@ -1,0 +1,4 @@
+1. Confirm <script> and common events are blocked.
+2. Test SVG tags: <svg>, <animate>, <animatetransform>.
+3. Test SVG-specific events: onbegin, onend, onrepeat.
+4. Combine: <svg><animatetransform onbegin=alert(1) attributeName=transform>

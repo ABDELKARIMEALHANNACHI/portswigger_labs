@@ -1,0 +1,10 @@
+LAB 2 — Stored XSS HTML Context
+=================================
+Unlike reflected XSS, stored XSS persists in the database and fires for
+every user who visits the page — including admins.
+
+ROOT CAUSE: Comment body stored verbatim; rendered with raw string concat.
+
+IMPACT: Mass session hijacking, admin account takeover, worm propagation.
+
+REMEDIATION: HTML-encode at render time. Consider DOMPurify for rich text.

@@ -1,0 +1,4 @@
+1. Check page source for ng-app attribute.
+2. Inject {{7*7}} — if response shows 49, template injection confirmed.
+3. Escalate to constructor chain: {{constructor.constructor('alert(1)')()}}
+4. Check AngularJS version — different versions need different bypass chains.

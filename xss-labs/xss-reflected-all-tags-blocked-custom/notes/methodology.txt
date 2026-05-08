@@ -1,0 +1,4 @@
+1. Confirm all standard tags are blocked.
+2. Try custom elements: <xss>, <x-foo>, <custom-tag>.
+3. Add autofocus + onfocus: <xss autofocus onfocus=alert(1) tabindex=1>
+4. If reflected without encoding → fires automatically on page load.

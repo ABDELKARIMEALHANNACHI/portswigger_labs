@@ -1,0 +1,4 @@
+1. Find fields rendered inside href attributes (website, back URL, avatar link).
+2. Set value to: javascript:alert(1)
+3. Trigger the link (click or auto-trigger via autofocus/focus).
+4. For stored: post data, then navigate as victim.

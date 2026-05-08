@@ -1,0 +1,8 @@
+LAB 6 — DOM XSS jQuery Selector + Hashchange
+=============================================
+jQuery's $() function has dual behavior:
+- String starting with #/. → CSS selector query
+- String starting with <  → HTML parser → DOM creation
+
+location.hash is attacker-controlled. Exploit via iframe that changes the
+parent's hash after load to trigger the hashchange handler.

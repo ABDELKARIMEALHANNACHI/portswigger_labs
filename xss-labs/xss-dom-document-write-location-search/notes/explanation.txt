@@ -1,0 +1,19 @@
+LAB 3 — DOM XSS document.write + location.search
+==================================================
+VULNERABILITY CLASS : DOM-Based XSS (CWE-79)
+
+ROOT CAUSE
+JavaScript reads from location.search (tainted SOURCE) and passes the value
+directly to document.write() (dangerous SINK) without sanitization.
+The server never sees the payload — it exists entirely client-side.
+
+TAINT FLOW
+location.search → URLSearchParams.get() → document.write()
+
+IMPACT
+Same as reflected XSS — but invisible to server-side WAFs and logs.
+
+REMEDIATION
+- Retire document.write() entirely.
+- Use DOM APIs: createElement, setAttribute, textContent.
+- Validate/encode at the point of sink consumption.

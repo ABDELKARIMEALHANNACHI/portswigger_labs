@@ -1,0 +1,7 @@
+LAB 17 — Reflected XSS in Canonical Link Tag
+=============================================
+The canonical link tag's href attribute reflects user-controlled URL.
+By injecting ' the attacker closes the href value and adds:
+  accesskey='x' onclick='alert(1)'
+The onclick fires when user presses the accesskey combination.
+This is a subtle, low-interaction XSS vector often missed in testing.

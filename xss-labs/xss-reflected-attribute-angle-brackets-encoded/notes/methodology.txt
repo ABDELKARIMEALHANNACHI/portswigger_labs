@@ -1,0 +1,4 @@
+1. Find input reflected inside HTML attributes (value=, placeholder=, etc.).
+2. Test: inject " and check source — if unencoded → attribute injection.
+3. Payload: " onmouseover="alert(1)  or  " autofocus onfocus="alert(1)
+4. Move mouse over / focus element → confirm XSS.

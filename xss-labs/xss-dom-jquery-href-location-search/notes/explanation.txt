@@ -1,0 +1,7 @@
+LAB 5 — DOM XSS jQuery href + location.search
+==============================================
+jQuery's .attr('href', value) does not validate the URL scheme.
+Passing javascript:alert(1) creates a clickable XSS link.
+
+TAINT FLOW: location.search → jQuery .attr('href')
+TRIGGER: User clicks the anchor element

@@ -1,0 +1,5 @@
+LAB 18 — Reflected XSS, Single Quote + Backslash Escaped
+=========================================================
+The developer escapes ' → \' and \ → \\ to prevent JS string escape.
+BUT: the HTML parser runs BEFORE the JS parser. </script> closes the
+script block at the HTML level — the ' escaping never helps.

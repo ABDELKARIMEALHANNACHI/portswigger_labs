@@ -1,0 +1,10 @@
+LAB 19 — Escape Sequence Attack
+================================
+When ' is manually escaped:
+  1. Attacker sends: \'
+  2. html.escape:   \' (unchanged — no HTML special chars)
+  3. replace '→\':  \\' (backslash doubled, THEN apostrophe escaped)
+  4. JS parses:      \\  = literal backslash | ' = end of string
+  5. → string closes, JS code follows
+
+The fundamental error: escaping ' without first escaping \.

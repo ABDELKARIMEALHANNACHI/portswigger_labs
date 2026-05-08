@@ -1,0 +1,5 @@
+1. Find reflected input inside <script> blocks.
+2. Identify the JS context: string, number, object, array.
+3. For string context: try '-alert(1)-' to close + inject.
+4. Check if ' is escaped — if not, confirm XSS.
+5. Check for \  escaping — try \';alert(1);//

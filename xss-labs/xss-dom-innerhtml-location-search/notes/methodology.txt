@@ -1,0 +1,4 @@
+1. Inject <script>alert(1)</script> — won't fire via innerHTML.
+2. Switch to event-handler payloads: <img src=x onerror=alert(1)>
+3. Confirm execution.
+4. Trace source (location.search) → sink (innerHTML) in JS source.

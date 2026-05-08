@@ -1,0 +1,4 @@
+1. Inject </script> — view source to see if script block is terminated.
+2. If yes: inject </script><script>alert(1)</script>
+3. Confirm ' and \ are escaped to verify the developer attempted JS escaping.
+4. This is the "HTML parser beats JS parser" bypass.

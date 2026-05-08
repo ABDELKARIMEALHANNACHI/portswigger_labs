@@ -1,0 +1,11 @@
+LAB 14 — XSS Filter Bypass (Most Tags Blocked)
+================================================
+Blocklists fail because HTML has hundreds of valid tags and event handlers.
+Common bypasses:
+  <body onresize=...>    — body tag often missed
+  <details ontoggle=...> — details element often missed
+  <svg><animate ...>     — SVG events
+  <input autofocus onfocus=...>
+
+METHODOLOGY: Fuzz all 100+ HTML tags, then fuzz all on* events.
+Burp Intruder with HTML tags wordlist → find 200 responses = allowed tags.

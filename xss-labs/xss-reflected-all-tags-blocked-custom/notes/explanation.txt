@@ -1,0 +1,7 @@
+LAB 15 — XSS via Custom HTML Elements
+=======================================
+Custom elements (<xss>, <x-foo>, any unknown tag name) are valid HTML.
+They support ALL standard event handlers. Combined with autofocus + tabindex,
+the onfocus event fires automatically with no user interaction.
+
+This bypasses any blocklist that enumerates known HTML tags.

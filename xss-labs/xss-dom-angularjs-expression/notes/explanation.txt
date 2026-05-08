@@ -1,0 +1,6 @@
+LAB 11 — AngularJS Expression Injection (Client-Side Template Injection)
+=========================================================================
+AngularJS 1.x evaluates {{ expression }} inside ng-app elements.
+Even though < > " are HTML-encoded, {{ }} syntax doesn't require them.
+The constructor chain {{constructor.constructor('alert(1)')()}} escapes
+the AngularJS sandbox and executes arbitrary JS.

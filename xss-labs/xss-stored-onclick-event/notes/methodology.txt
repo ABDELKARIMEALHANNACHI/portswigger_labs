@@ -1,0 +1,4 @@
+1. Find stored data reflected inside event handler attributes (onclick, onmouseover).
+2. Test standard JS string escapes — if blocked, try HTML entities.
+3. Inject &apos; instead of ' — fires on click.
+4. Combine with javascript: URI for stored attribute XSS.

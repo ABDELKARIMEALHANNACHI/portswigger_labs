@@ -1,0 +1,7 @@
+LAB 8 — Stored XSS in href Attribute
+=====================================
+The website URL is stored in the DB and rendered inside an href attribute.
+Encoding " prevents attribute escape, but javascript: is still a valid
+href value. Clicking the link executes the script.
+
+FIX PRINCIPLE: For URL-context output, validate the scheme, not just encode.

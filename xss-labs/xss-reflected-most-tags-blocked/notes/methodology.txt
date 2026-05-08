@@ -1,0 +1,6 @@
+1. Inject <script>alert(1)</script> — confirm it's blocked.
+2. Burp Intruder: fuzz /search?search=<§tag§> with HTML tags wordlist.
+   Filter responses: 200 with tag reflected = allowed.
+3. For each allowed tag, fuzz event handlers: <body §event§=alert(1)>
+4. Find working tag+event combination.
+5. Deliver via iframe if user interaction needed (resize, hover, focus).

@@ -1,0 +1,15 @@
+LAB 25 — Dangling Markup Attack (CSP Bypass)
+============================================
+When CSP blocks script execution, attackers use "dangling markup" to
+exfiltrate data without executing JS.
+
+The injected payload opens an HTML attribute (e.g. img src='...') but
+never closes it. The browser continues reading the page as part of the
+attribute value until it finds a matching closing quote. This "consumes"
+subsequent HTML — including CSRF tokens — and sends it as part of a
+network request (img src load) to the attacker's server.
+
+PRECONDITIONS:
+- Reflected XSS (even without script execution)
+- CSP with img-src * or connect-src *
+- Sensitive token on same page as reflection point

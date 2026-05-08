@@ -1,0 +1,8 @@
+LAB 12 — Reflected DOM XSS
+===========================
+Two-stage attack:
+1. Server concatenates user input into a JSON-like response (not proper JSON).
+2. Client-side JS uses eval() to process the server's response.
+The attacker breaks out of the JSON string, executing arbitrary JS via eval.
+
+TAINT FLOW: location.search → fetch URL → server concat → eval()

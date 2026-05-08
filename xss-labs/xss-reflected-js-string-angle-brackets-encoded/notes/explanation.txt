@@ -1,0 +1,11 @@
+LAB 9 — Reflected XSS in JS String
+=====================================
+Context: var searchQuery = 'USER_INPUT';
+HTML-encoding < > doesn't help — attacker never needs angle brackets.
+They just close the string with ' then inject arbitrary JS.
+
+ENCODING RULE: Match encoding to context:
+  HTML body    → HTML entity encode
+  HTML attribute → HTML attribute encode
+  JavaScript   → JS encode (escape ', \, newlines) or json.dumps()
+  URL          → encodeURIComponent()

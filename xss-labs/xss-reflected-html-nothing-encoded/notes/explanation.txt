@@ -1,0 +1,19 @@
+LAB 1 — Reflected XSS into HTML context with nothing encoded
+=============================================================
+VULNERABILITY CLASS : Reflected XSS (CWE-79)
+CVSS                : 6.1 (Medium) AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N
+
+ROOT CAUSE
+User-supplied input is reflected in the HTTP response without any encoding.
+The browser parses the injected markup as HTML/JS and executes it.
+
+IMPACT
+- Session hijacking via cookie theft
+- Keylogging, form hijacking
+- Phishing via page content manipulation
+
+REMEDIATION
+1. HTML-encode all reflected output (context-appropriate encoding).
+2. Use templating engines with auto-escaping ON by default.
+3. Content-Security-Policy as defence-in-depth.
+4. Never use |safe, dangerouslySetInnerHTML, or raw string concat with user input.

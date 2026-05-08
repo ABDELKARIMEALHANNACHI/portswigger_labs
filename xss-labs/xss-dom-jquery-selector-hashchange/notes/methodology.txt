@@ -1,0 +1,4 @@
+1. Search JS source for $(location.hash), $(location.search), $(url_param).
+2. Check jQuery version — older versions more permissive with HTML input.
+3. Test: set hash to <img src=x onerror=alert(1)>.
+4. For hashchange: use iframe exploit to force hash change post-load.

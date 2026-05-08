@@ -1,0 +1,5 @@
+1. Identify JS reading from location.search / location.hash.
+2. Trace data flow to a dangerous sink (document.write, innerHTML, eval).
+3. Craft payload to break out of the context document.write creates.
+4. Test with "><svg onload=alert(1)> — closes attribute, injects element.
+5. Use Burp DOM Invader to automate source→sink tracing.

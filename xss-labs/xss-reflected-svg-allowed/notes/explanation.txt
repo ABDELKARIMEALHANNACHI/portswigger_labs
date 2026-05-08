@@ -1,0 +1,8 @@
+LAB 16 — Reflected XSS via SVG animatetransform
+=================================================
+SVG has animation elements (animate, animatetransform, set) that support
+event handlers not commonly blocklisted:
+  onbegin, onend, onrepeat
+
+<svg><animatetransform onbegin=alert(1)> fires immediately on render.
+No user interaction, no clicks needed.

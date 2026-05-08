@@ -1,0 +1,5 @@
+LAB 13 — Stored DOM XSS
+========================
+innerHTML parses its argument as HTML and decodes HTML entities in the process.
+&lt;img src=x onerror=alert(1)&gt; → <img src=x onerror=alert(1)>
+So server-side HTML entity encoding is undone by the client-side innerHTML sink.

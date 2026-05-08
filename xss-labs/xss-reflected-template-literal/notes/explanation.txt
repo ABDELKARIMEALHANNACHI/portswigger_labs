@@ -1,0 +1,5 @@
+LAB 21 — Reflected XSS in Template Literal
+===========================================
+JS template literals `` `...` `` evaluate `${expression}` as JS.
+Standard XSS filters escape ' " < > — none of these characters appear in
+the `${}` syntax. The attack bypasses every common filter.

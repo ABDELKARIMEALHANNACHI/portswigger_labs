@@ -1,0 +1,8 @@
+LAB 1 — Methodology
+====================
+1. Identify all input reflection points (search, error messages, usernames).
+2. Inject canonical probe: <script>alert(1)</script>
+3. View page source — check if < > are encoded or raw.
+4. If raw → inject PoC → confirm execution.
+5. Escalate to cookie theft payload.
+6. Document in Burp Repeater with before/after screenshots.

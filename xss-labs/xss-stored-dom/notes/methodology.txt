@@ -1,0 +1,4 @@
+1. Find stored data rendered via innerHTML in client-side JS.
+2. Post HTML-encoded payload: &lt;img src=x onerror=alert(1)&gt;
+3. When JS sets innerHTML, entities are decoded → payload executes.
+4. Also test: <><img src=x onerror=alert(1)> to bypass server-side replace.

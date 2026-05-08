@@ -1,0 +1,4 @@
+1. Find pages that fetch data from the server and eval() the response.
+2. Check if the server endpoint echoes user input with string concat.
+3. Inject \" to escape the JSON string.
+4. Follow with JS payload and comment out the rest: \"-alert(1)}//

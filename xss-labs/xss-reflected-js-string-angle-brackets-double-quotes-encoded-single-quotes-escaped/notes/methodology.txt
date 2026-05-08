@@ -1,0 +1,4 @@
+1. Inject ' alone → see if it's escaped to \'.
+2. Inject \' → check if output is \\' (escape bypass confirmed).
+3. Full payload: \'-alert(1)//
+4. This technique: inject backslash to consume the escape character.

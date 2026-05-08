@@ -1,0 +1,6 @@
+LAB 7 — Reflected XSS in HTML Attribute
+========================================
+Context matters. Inside an attribute value:
+  <input value="USER_INPUT">
+Encoding < > is not enough — attacker uses " to close attribute and inject
+event handlers. Full attribute encoding must encode " → &quot;

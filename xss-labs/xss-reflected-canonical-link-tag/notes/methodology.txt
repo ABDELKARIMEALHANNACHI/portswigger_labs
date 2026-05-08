@@ -1,0 +1,5 @@
+1. Check <head> for <link rel="canonical"> tags.
+2. Identify if the URL/query string is reflected in href.
+3. Inject: ?'accesskey='x'onclick='alert(1)
+4. View source — verify attribute injection.
+5. Trigger: Alt+Shift+X (or platform equivalent).

@@ -1,0 +1,4 @@
+1. Find pages with "back" or "return" URL parameters.
+2. Set parameter to javascript:alert(1).
+3. Find the anchor element in the DOM — check its href attribute.
+4. Click the link — if alert fires → XSS confirmed.

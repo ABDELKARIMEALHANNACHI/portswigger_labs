@@ -1,0 +1,5 @@
+1. Find user-controlled data that is stored and later displayed (comments, usernames, profiles).
+2. Post <script>alert(1)</script> as the value.
+3. Navigate to the page where data is rendered.
+4. If alert fires → stored XSS confirmed.
+5. Replace with cookie-stealing payload; test in separate session (simulate victim).
