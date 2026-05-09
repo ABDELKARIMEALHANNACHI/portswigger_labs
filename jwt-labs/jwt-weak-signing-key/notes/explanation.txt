@@ -1,0 +1,22 @@
+LAB 3 — JWT Weak Signing Key
+==============================
+VULNERABILITY CLASS : Weak Cryptographic Key (CWE-326)
+
+ROOT CAUSE
+HS256 is a symmetric HMAC — the same key signs and verifies.
+If the key is weak (dictionary word, short string, common JWT secret),
+hashcat can brute-force it offline using only the JWT itself.
+
+ATTACK
+1. Capture any valid JWT (no special access needed).
+2. Offline brute-force: hashcat -m 16500 <JWT> wordlist.txt
+3. Once cracked, sign arbitrary payloads with the recovered secret.
+4. No rate limiting, no lockout — purely offline.
+
+ENTROPY REQUIREMENT
+HS256 key: minimum 256 bits (32 random bytes)
+RS256 key: minimum 2048-bit RSA key pair
+ES256 key: minimum 256-bit EC key pair
+
+RECOMMENDATION
+Prefer RS256/ES256 — even if the public key leaks, tokens cannot be forged.

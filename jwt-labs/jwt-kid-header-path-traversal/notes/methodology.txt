@@ -1,0 +1,6 @@
+1. Identify JWT using HS256 with a kid header.
+2. Set kid=../../dev/null.
+3. Sign forged admin token with empty string key.
+4. If fails: try ../../../dev/null, ../../../../../../dev/null.
+5. Also try /dev/null (absolute path if join doesn't prepend base dir).
+6. Confirm: server accepts token → path traversal + empty key confirmed.

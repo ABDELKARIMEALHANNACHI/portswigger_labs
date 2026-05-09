@@ -1,0 +1,20 @@
+LAB 8 — Algorithm Confusion Without Exposed Key
+================================================
+VULNERABILITY CLASS : Algorithm Confusion + Key Derivation
+
+ROOT CAUSE
+Same as Lab 7, but the RSA public key is not explicitly exposed.
+Mathematical insight: given two RSA signatures over known messages,
+the public modulus (n) can be computed via GCD of derived values.
+Tools like rsa_sign2n or Burp's sig2n automate this.
+
+ATTACK
+1. Collect two JWTs (same private key used to sign both).
+2. Run sig2n — derive candidate RSA public keys.
+3. Use derived public key as HS256 HMAC secret.
+4. Sign forged admin token.
+5. Try both candidate keys — one will be correct.
+
+PREREQUISITES
+- Server accepts both RS256 and HS256 (same as Lab 7).
+- Attacker can collect at least two valid JWTs signed with same key.

@@ -1,0 +1,5 @@
+1. Capture your own JWT.
+2. Build alg:none token manually or with jwt_tool: jwt_tool <JWT> -X a
+3. Try variations: none / None / NONE / nOnE (case sensitivity bugs).
+4. Try with and without the trailing dot.
+5. Send to protected endpoints.

@@ -1,0 +1,7 @@
+1. Inspect JWT header for jku parameter.
+2. Generate RSA key pair.
+3. Create JWKS JSON with public key; host on Burp Collaborator / ngrok.
+4. Forge JWT: set jku to attacker URL, sub to administrator, sign with private key.
+5. Send — check Burp Collaborator for incoming DNS/HTTP from server.
+6. If server fetches JWKS → key injection + SSRF confirmed.
+7. Test jku bypass via open-redirect on target domain if URL is validated.

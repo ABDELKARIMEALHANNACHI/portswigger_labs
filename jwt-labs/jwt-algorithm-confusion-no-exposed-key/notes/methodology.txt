@@ -1,0 +1,6 @@
+1. Collect two JWTs from /login (same user, two requests).
+2. Run: docker run portswigger/sig2n <JWT1> <JWT2>
+3. Get two candidate public keys in PEM format.
+4. For each candidate: forge HS256 token with sub=administrator.
+5. Try both against /admin — 200 = correct key found.
+6. Burp JWT Editor automates: "JWT Editor Keys" → "New RSA Key" → derived from tokens.

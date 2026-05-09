@@ -1,0 +1,7 @@
+1. Identify JWT using RS256.
+2. Find exposed public key: /jwks.json, /.well-known/jwks.json, server error messages.
+3. Convert JWK n,e to PEM format.
+4. Forge HS256 token, using PEM public key bytes as HMAC secret.
+5. Set sub=administrator, alg=HS256.
+6. Send — if 200 → algorithm confusion confirmed.
+7. Burp JWT Editor: "Attack" → "HMAC Key Confusion" automates steps 3-5.

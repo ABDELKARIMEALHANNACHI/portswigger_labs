@@ -1,0 +1,19 @@
+LAB 1 — JWT Unverified Signature
+==================================
+VULNERABILITY CLASS : Broken Authentication (OWASP A07:2021)
+CVSS                : 9.8 Critical — AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+ROOT CAUSE
+The application decodes the JWT payload to read claims (sub, role, etc.)
+but NEVER calls a verification function on the signature. An attacker can
+modify any claim — including the "sub" (subject) — without detection.
+
+IMPACT
+Complete authentication bypass. Any user can impersonate any other user,
+including administrators, by simply editing the payload base64 string.
+
+REMEDIATION
+1. Use a JWT library that verifies signatures by default.
+2. Explicitly pass the secret/key to the decode function.
+3. Pin the allowed algorithm — never trust the token's own 'alg' header.
+4. Enable expiry validation (verify_exp=True).

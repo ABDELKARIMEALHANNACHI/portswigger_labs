@@ -1,0 +1,17 @@
+LAB 7 — JWT Algorithm Confusion
+=================================
+VULNERABILITY CLASS : Cryptographic Confusion / Broken Authentication
+
+ROOT CAUSE
+RS256 = asymmetric (sign with private key, verify with public key).
+HS256 = symmetric (sign and verify with SAME secret).
+
+If a server verifies with algorithms=["RS256","HS256"] and uses the RSA
+public key in both cases:
+- RS256: verifies with public key ✓ (correct)
+- HS256: verifies HMAC with public key bytes as secret ✓ (confused!)
+
+Attacker signs HS256 HMAC using the known public key → server "verifies"
+it as if it were a legitimate symmetric token.
+
+PRECONDITION: Attacker must know the RSA public key (often exposed at /jwks.json).

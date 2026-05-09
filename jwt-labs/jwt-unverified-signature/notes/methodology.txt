@@ -1,0 +1,10 @@
+LAB 1 — Methodology
+====================
+1. Log in with low-privilege account — obtain valid JWT.
+2. Decode payload: split on '.', base64-decode middle part.
+3. Modify sub/role claim to privileged value (administrator, admin, true).
+4. Re-encode payload (base64url, strip padding).
+5. Replace middle part of token — keep original header and signature.
+6. Send modified token — if 200 → signature never checked.
+
+TOOLS: Burp JWT Editor, jwt_tool, manual base64

@@ -1,0 +1,14 @@
+LAB 4 — JWK Header Injection
+==============================
+VULNERABILITY CLASS : Improper Verification of Cryptographic Signature
+
+ROOT CAUSE
+The JWT specification allows embedding a public key in the token header
+via the `jwk` parameter. Vulnerable servers use this embedded key for
+verification instead of their own pre-configured trusted keys.
+
+Attack: attacker generates RSA key pair → embeds public key in `jwk` header →
+signs token with their private key → server verifies with attacker's public key.
+The server is essentially verifying the token against the attacker's own key.
+
+IMPACT: Complete authentication bypass, arbitrary claim values accepted.

@@ -1,0 +1,19 @@
+LAB 2 — JWT alg:none Bypass
+============================
+VULNERABILITY CLASS : Algorithm Confusion / Broken Authentication
+CVE EXAMPLES        : CVE-2015-9235 (node-jsonwebtoken), CVE-2016-10555
+
+ROOT CAUSE
+The JWT specification originally allowed alg=none to support "unsecured JWTs".
+Vulnerable implementations read the `alg` field from the token's OWN header
+and skip signature verification when it equals "none".
+
+ATTACK
+1. Take a valid JWT.
+2. Change header alg to "none" (also try "None", "NONE", "nOnE").
+3. Modify payload claims (sub → administrator).
+4. Remove signature — keep trailing dot: header.payload.
+5. Server skips verification → accepts forged token.
+
+IMPACT
+Complete authentication bypass — attacker becomes any user.

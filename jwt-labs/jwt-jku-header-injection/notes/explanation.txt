@@ -1,0 +1,17 @@
+LAB 5 — JWK URL (jku) Header Injection
+========================================
+DUAL VULNERABILITY: JWT Key Injection + Server-Side Request Forgery
+
+ROOT CAUSE
+The `jku` JWT header parameter specifies a URL where the server can fetch
+a JWKS (JSON Web Key Set) for verification. Vulnerable servers fetch this
+URL from the token itself — attacker controls where keys are fetched from.
+
+Attack:
+1. Host attacker-controlled JWKS at any URL.
+2. Set jku in token header to attacker's URL.
+3. Sign token with attacker's private key.
+4. Server fetches attacker's JWKS, gets attacker's public key, verifies → trusts it.
+
+ADDITIONAL IMPACT: jku injection can also be used for SSRF — pointing to
+internal metadata services, internal APIs, etc.

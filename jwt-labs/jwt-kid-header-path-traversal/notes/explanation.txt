@@ -1,0 +1,15 @@
+LAB 6 — JWT kid Header Path Traversal
+========================================
+VULNERABILITY CLASS : Path Traversal (CWE-22) + Weak Key
+
+ROOT CAUSE
+The `kid` (key ID) header is used as a filename to load the HMAC secret.
+Path traversal: kid=../../dev/null → server reads /dev/null (0 bytes).
+Attacker signs token with empty string → matches /dev/null content.
+
+ATTACK CHAIN
+1. Set kid=../../dev/null (or more ../../ depending on depth).
+2. Sign forged HS256 token with empty string "".
+3. Server reads /dev/null → gets empty bytes → verifies → match.
+
+This works because many HMAC implementations treat empty key as "".

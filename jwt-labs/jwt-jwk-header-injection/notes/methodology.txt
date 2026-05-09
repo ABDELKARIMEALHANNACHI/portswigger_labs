@@ -1,0 +1,6 @@
+1. Obtain valid JWT; check header for jwk/jku/kid parameters.
+2. Generate RSA key pair (Burp JWT Editor → New RSA Key).
+3. Modify payload: sub → administrator.
+4. Burp JWT Editor "Attack" → "Embedded JWK" → select attacker key.
+5. Forward request — if server accepts → jwk injection confirmed.
+6. Alternatively: manually construct token with jwk in header using Python.

